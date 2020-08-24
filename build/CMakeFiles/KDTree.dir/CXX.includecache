@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/KDTree.hpp
+eigen3/Eigen/Dense
+-
+iostream
+-
+algorithm
+-
+boost/shared_ptr.hpp
+-
+
+/home/timmy/icp_registration/src/KDTree.cpp
+KDTree.hpp
+-
+

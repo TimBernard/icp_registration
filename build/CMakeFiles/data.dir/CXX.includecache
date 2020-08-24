@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/data.hpp
+iostream
+-
+memory
+-
+string
+-
+vector
+-
+fstream
+-
+sstream
+-
+eigen3/Eigen/Dense
+-
+cstring
+-
+cerrno
+-
+
+/home/timmy/icp_registration/src/data.cpp
+data.hpp
+/home/timmy/icp_registration/src/data.hpp
+
