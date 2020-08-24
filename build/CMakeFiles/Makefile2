@@ -174,9 +174,9 @@ clean: CMakeFiles/data.dir/clean
 # Target rules for target CMakeFiles/main.dir
 
 # All Build rule for target.
+CMakeFiles/main.dir/all: CMakeFiles/registration.dir/all
 CMakeFiles/main.dir/all: CMakeFiles/KDTree.dir/all
 CMakeFiles/main.dir/all: CMakeFiles/data.dir/all
-CMakeFiles/main.dir/all: CMakeFiles/registration.dir/all
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/timmy/icp_registration/build/CMakeFiles --progress-num=5,6 "Built target main"
