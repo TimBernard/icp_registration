@@ -111,7 +111,7 @@ namespace reg{
   }
 
   
-  // make Nx4 set of points all non-homogneous 
+	// make Nx4 set of points all non-homogneous 
   Eigen::MatrixXd makeNotHomogeneous(const Eigen::MatrixXd& points){
 
     Eigen::MatrixXd points_((int)points.rows()-1,(int)points.cols());
