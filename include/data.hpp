@@ -11,10 +11,6 @@
 #include <cstring>
 #include <cerrno>
 
-struct Point3d { 
-    double x, y, z;
-};
-
 // find number of points
 int getNumPoints(std::ifstream& file);
 
