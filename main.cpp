@@ -79,7 +79,7 @@ int main(int argc, char** argv){
   Eigen::Vector3d my_p = Eigen::Vector3d::Random(3,1);
   my_mat << my_rot, my_p, 0, 0, 0, 1;
 
-  // Do Above with 3xN point set instead of Nx3 point set 
+  // Try out using 3xN point set 
 
   Eigen::MatrixXd my_points(3,10);
   my_points = Eigen::MatrixXd::Random(3,10);
@@ -102,8 +102,49 @@ int main(int argc, char** argv){
   std::cout << reg::makeNotHomogeneous(new_my_points) << std::endl;
 
   /* Test out finding closest points to transformed scene set in the model set */
-  Eigen::MatrixXd my_CP = reg::findClosestPoints(point_cloud_one, point_cloud_zero);
-  std::cout << my_CP << std::endl;
-     
+
+  //  Eigen::MatrixXd my_CP = reg::findClosestPoints(point_cloud_one, point_cloud_zero);
+  // std::cout << my_CP << std::endl;
+  
+  double* my_points_data = my_points.data();
+  std::vector<double> my_points_(my_points_data, my_points_data + my_points.cols()*3);
+  std::vector<double>::iterator it;
+  for(it = my_points_.begin(); it != my_points_.end(); ++it){
+    std::cout << *it << std::endl;
+  }
+  
+  std::vector<Eigen::Vector3d> points_vec; 
+  points_vec.resize(10000);
+
+  std::vector<Eigen::Vector3d>::iterator iter;
+  for(iter = points_vec.begin(); iter != points_vec.end(); ++iter){
+    *iter = Eigen::Vector3d::Random(); 
+  }
+
+  for(int i = 0; i < points_vec.size(); ++i){
+    std::cout << points_vec[i] << std::endl;
+  }
+
+  int d = points_vec.end() - points_vec.begin();
+  std::cout << d << std::endl;
+
+  //kd_tree my_tree(my_points);
+  kd_tree my_tree(point_cloud_one);
+  std::cout << my_tree.get_root()->left->right->left->left->left->right->left->right->point << std::endl;
+  Node* okay;
   return EXIT_SUCESS;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

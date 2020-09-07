@@ -54,7 +54,7 @@ namespace reg{
       R  = U * V.transpose();
       
       if(R.determinant() < 0){
-  std::cout << "Algorithm failed" << std::endl;
+        std::cout << "Algorithm failed" << std::endl;
       }
     }
     
@@ -87,15 +87,19 @@ namespace reg{
     Eigen::MatrixXd CP(3,(int)new_scene_set.cols());
     Eigen::Vector3d scene_point;
 
+    std::vector<double> distances;
+    distances.resize(Nm);
     for(int i = 0; i < Ns; ++i){
 
+      std::cout << "Point Number: " << i << std::endl;
       scene_point = new_scene_set.col(i);
+      std::cout << "Point: " << scene_point << std::endl;
 
-      // Find the distances between this point and all model points 
-      std::vector<double> distances;
-      distances.reserve(Nm);
+      // Find the distances between this point and all model points
+      //std::vector<double> distances;
+      //distances.resize(Nm);
       for(int j = 0; j < Nm; ++j){
-        distances.push_back((scene_point-model_set.col(j)).norm());
+        distances[j]=(scene_point-model_set.col(j)).norm();
       }
 
       // Sort distances and take the closest one 
@@ -109,7 +113,6 @@ namespace reg{
      
     return CP;
   }
-
   
   // make Nx4 set of points all non-homogneous 
   Eigen::MatrixXd makeNotHomogeneous(const Eigen::MatrixXd& points){

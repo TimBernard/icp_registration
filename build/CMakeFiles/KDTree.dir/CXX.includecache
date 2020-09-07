@@ -7,11 +7,13 @@
 #IncludeRegexTransform: 
 
 ../include/KDTree.hpp
-eigen3/Eigen/Dense
+eigen3/Eigen/Core
 -
 iostream
 -
 algorithm
+-
+limits
 -
 boost/shared_ptr.hpp
 -

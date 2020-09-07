@@ -38,3 +38,4 @@ add_library(data STATIC include/data.hpp src/data.cpp)
 add_executable(main main.cpp)
 target_link_libraries(main registration KDTree data)
 
+
