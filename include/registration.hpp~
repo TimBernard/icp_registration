@@ -19,7 +19,7 @@ namespace reg{
    */
   Eigen::MatrixXd rigidPointToPointSVD(const Eigen::MatrixXd& A,  const Eigen::MatrixXd& B);
   
-  //TODO: Function that iteratively finds point correspondences and registrations between two point clouds
+  // Function that iteratively finds point correspondences and registrations between two point clouds
   Eigen::MatrixXd icp(const Eigen::MatrixXd& model_set, const Eigen::MatrixXd& scene_set);
 
 	/**

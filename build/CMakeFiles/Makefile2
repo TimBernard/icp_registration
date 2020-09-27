@@ -63,7 +63,7 @@ CMAKE_BINARY_DIR = /home/timmy/icp_registration/build
 # Target rules for target CMakeFiles/run.dir
 
 # All Build rule for target.
-CMakeFiles/run.dir/all:
+CMakeFiles/run.dir/all: CMakeFiles/main.dir/all
 	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/depend
 	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/timmy/icp_registration/build/CMakeFiles --progress-num= "Built target run"
@@ -71,7 +71,7 @@ CMakeFiles/run.dir/all:
 
 # Build rule for subdir invocation for target.
 CMakeFiles/run.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/timmy/icp_registration/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/timmy/icp_registration/build/CMakeFiles 8
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/run.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/timmy/icp_registration/build/CMakeFiles 0
 .PHONY : CMakeFiles/run.dir/rule
@@ -206,9 +206,9 @@ clean: CMakeFiles/data.dir/clean
 # Target rules for target CMakeFiles/main.dir
 
 # All Build rule for target.
-CMakeFiles/main.dir/all: CMakeFiles/registration.dir/all
 CMakeFiles/main.dir/all: CMakeFiles/KDTree.dir/all
 CMakeFiles/main.dir/all: CMakeFiles/data.dir/all
+CMakeFiles/main.dir/all: CMakeFiles/registration.dir/all
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/timmy/icp_registration/build/CMakeFiles --progress-num=5,6 "Built target main"

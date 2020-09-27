@@ -2,16 +2,16 @@
 
 namespace reg{  
 
-  /**  
-     Solve for Rigid Transformation between two 3D point sets using Singular Value Decomposition. See:
-
-     Arun KS, Huang TS, Blostein SD. Least-squares fitting of two 3-d point sets.                                                                                                      
-     IEEE Trans Pattern Anal Mach Intell. 1987;9(5):698-700. doi:10.1109/tpami.1987.4767965
-
-     \param[in] A        Set of 3D points                                                                                                                                              
-     \param[in] B        Set of 3D points                                                                      
-     \return             SE(3) Homogeneous Transformation 
-  */
+  /**
+   * Solve for rigid transformation between two 3D point sets using Singular Value Decomposition. See:
+   *
+   * Arun KS, Huang TS, Blostein SD. Least-squares fitting of two 3-d point sets.                                                                                                      
+   * IEEE Trans Pattern Anal Mach Intell. 1987;9(5):698-700. doi:10.1109/tpami.1987.4767965
+   * 
+   * @param A set of 3D points
+   * @param B set of 3D points 
+   * @return SE3 the transformation that best aligns these two point clouds 
+   */
   Eigen::MatrixXd rigidPointToPointSVD(const Eigen::MatrixXd& A,  const Eigen::MatrixXd& B){
     
     int n_A = A.cols();
@@ -78,13 +78,21 @@ namespace reg{
     return reg_final;
   }
 
-  //TODO: Find closest points
+  /**
+   * Take the transformed scene point set and find the points in the model that are closest to 
+   * the points from this current estimate: Uses linear search approach 
+   *
+   * @param model_set the set of points from the model cloud
+   * @param new_scene_set the set of points from the transformed scene
+   * @return CP the set of closest points to the transformed scene cloud
+   */
   Eigen::MatrixXd findClosestPoints(const Eigen::MatrixXd& model_set, const Eigen::MatrixXd& new_scene_set){
 
     int Nm = model_set.cols();
     int Ns = new_scene_set.cols();
 
-    Eigen::MatrixXd CP(3,(int)new_scene_set.cols());
+    //Eigen::MatrixXd CP(3,(int)new_scene_set.cols());
+    Eigen::MatrixXd CP(3,Ns);
     Eigen::Vector3d scene_point;
 
     std::vector<double> distances;
@@ -96,8 +104,6 @@ namespace reg{
       std::cout << "Point: " << scene_point << std::endl;
 
       // Find the distances between this point and all model points
-      //std::vector<double> distances;
-      //distances.resize(Nm);
       for(int j = 0; j < Nm; ++j){
         distances[j]=(scene_point-model_set.col(j)).norm();
       }
@@ -113,8 +119,38 @@ namespace reg{
      
     return CP;
   }
-  
-  // make Nx4 set of points all non-homogneous 
+
+  /**
+   * Take the transformed scene point set and find the points in the model that are closest to 
+   * the points from this current estimate: Uses a KD Tree for sped up search  
+   *
+   * @param tree the set of points from the model cloud (held in a tree)
+   * @param new_scene_set the set of points from the transformed scene
+   * @return CP the set of closest points to the transformed scene cloud
+   */
+  Eigen::MatrixXd findClosestPointsFaster(kd_tree& tree, const Eigen::MatrixXd& new_scene_set){
+    
+    int Ns = new_scene_set.cols();
+    //Eigen::MatrixXd CP(3,(int)new_scene_set.cols());
+    Eigen::MatrixXd CP(3,Ns);
+    
+    // Traverse through each scene point to find the closest in the model 
+    Node* root = tree.get_root(); 
+    for(int i = 0; i < Ns; ++i){
+    
+      tree.get_nn(new_scene_set.col(i),root,0);
+      CP.col(i) = tree.get_best()->point;
+      tree.reset_best();
+    }
+    return CP;
+  }
+
+  /**
+   * Make set of homogenous points non-homogeneous 4xN -> 3xN
+   * 
+   * @param points set of homogeneous coordinates
+   * @return points_ set of non-homogeneous coordinates
+   */
   Eigen::MatrixXd makeNotHomogeneous(const Eigen::MatrixXd& points){
 
     Eigen::MatrixXd points_((int)points.rows()-1,(int)points.cols());
@@ -122,7 +158,13 @@ namespace reg{
     return points_; 
   }
 
-  // sets a 3xN set of points to 4xN, appending 1 to each row
+  /**
+   * Make set of non-homogenous points homogeneous 3xN -> 4xN,
+   * appending 1 to each row 
+   * 
+   * @param points set of non-homogeneous coordinates
+   * @return points_ set of homogeneous coordinates
+   */
   Eigen::MatrixXd makeHomogeneous(const Eigen::MatrixXd& points){
 
     Eigen::MatrixXd points_((int)(points.rows()+1),(int)(points.cols()));

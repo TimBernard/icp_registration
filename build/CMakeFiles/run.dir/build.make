@@ -53,8 +53,8 @@ CMAKE_BINARY_DIR = /home/timmy/icp_registration/build
 # Include the progress variables for this target.
 include CMakeFiles/run.dir/progress.make
 
-CMakeFiles/run: ../binary
-	binary
+CMakeFiles/run: bin/main
+	bin/main
 
 run: CMakeFiles/run
 run: CMakeFiles/run.dir/build.make

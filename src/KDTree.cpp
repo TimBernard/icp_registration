@@ -1,15 +1,21 @@
 #include <KDTree.hpp>
 
-// intialize empty tree
+/**
+ * Default constructor 
+ */
 kd_tree::kd_tree(){
 
   root = nullptr;
-  smallestPoint = nullptr;
   dim = 0;
   Nm = 0;
 }
 
-// intialize tree and populate with 3xN point set (from model)
+/** 
+ * Takes an Eigen Matrix of points and creates a tree (a KD Tree)
+ * with the tree's toplevel node stored as the root member variable
+ *
+ * @param points the set of points to make a tree of 
+ */
 kd_tree::kd_tree(const Eigen::MatrixXd& points){
 
   std::cout << "Building tree..." << std::endl;
@@ -26,14 +32,27 @@ kd_tree::kd_tree(const Eigen::MatrixXd& points){
     count++;
   }
   root = make_tree(points_vec.begin(),points_vec.end(),0);
-  smallestPoint = nullptr;
-  
+  std::cout << "Tree built" << std::endl;
 }
 
-// destroy objects and free memory 
-kd_tree::~kd_tree(){ delete root;}
+/**
+ * Destroys tree and frees memory
+ */
+kd_tree::~kd_tree(){ 
+
+  delete root;
+  root = NULL;
+}
  
-// make the tree from iterator to beginning and end of Eigen matrix (point set)
+/**
+ * Takes the beginning and end of a point set and recursively creates subtrees that
+ * split the current dimension in half (according to the midpoint of the data along 
+ * that axis)
+ *
+ * @param pts_begin an iterator of the beginning of a vector of points
+ * @param pts_end an iterator to the end of a vector of points
+ * @param depth the current depth of the tree   
+ */
 Node* kd_tree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
                          const std::vector<Eigen::Vector3d>::iterator& pts_end,
                          int depth){
@@ -41,7 +60,6 @@ Node* kd_tree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin
   if(pts_begin == pts_end){ return nullptr;}
 
   int axis = depth % dim;
-  //int len = pts_end - pts_begin;
   
   auto cmp_eig_vec = [axis](const Eigen::Vector3d& p1, const Eigen::Vector3d& p2){
     return (p1[axis] < p2[axis]); };
@@ -54,38 +72,49 @@ Node* kd_tree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin
   return node;
 } 
 
-// in progress
-Node* kd_tree::get_nn(const Eigen::Vector3d& query, Node* root){
 
-  if (root == nullptr){
-    return nullptr;
-  } 
+/**
+ * Takes a query point, and finds its nearest neighbor within the KD Tree
+ * by updating the "best" node pointer member of the tree associated with 
+ * the input root, T
+ *
+ * @param query the point we are querying 
+ * @param T the root node of the KD Tree
+ * @param depth the depth of the tree
+ */
+void kd_tree::get_nn(const Eigen::Vector3d& query, Node* T, int depth){
+  
+  if (T == nullptr){ return; } 
 
-  double dist = (query - root->point).norm();
+  int axis = depth % dim;
+
+  // Update best estimate, if the current node is closer 
+  double dist = (query - T->point).norm();
   if (dist < best_dist){
-    best = root;
+    best = T;
     best_dist = dist;
   }
+  
+  // Search the side of the tree/subtree according to if it's less than,
+  // greater than or equal to current point along this depth's axis 
+  bool search_left = false;
+  if(query[axis] < T->point[axis]){
+    search_left = true;
+    get_nn(query, T->left, depth+1);
+  }else{
+    search_left = false;
+    get_nn(query, T->right, depth+1);
+  }
 
-return nullptr;
+  // Restrict search to only areas within the current hypersphere 
+  if(std::abs(T->point[axis]-best->point[axis]) < best_dist){
+    if (search_left == false){
+      get_nn(query, T->left, depth+1);
+    }
+    else{
+      get_nn(query, T->right, depth+1);
+    }
+  }
 }
 
 
-
-
-
-
-
-
-
-
-
-
-/*
-  int n = points.cols();
-  if (n <= 0){
-    return nullptr;
-  }
-
-  std::vector<double> points_(&points[0],points.data()
-*/

@@ -142,7 +142,6 @@ int main(int argc, char** argv){
   std::cout << "Real Nearest test: " << my_tree.get_best()->point << std::endl; 
 */
 
-  // tree test
   Eigen::MatrixXd my_CP = reg::findClosestPointsFaster(my_tree, point_cloud_zero);
 
   return EXIT_SUCESS;

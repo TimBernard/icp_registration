@@ -17,6 +17,8 @@ limits
 -
 boost/shared_ptr.hpp
 -
+cmath
+-
 
 /home/timmy/icp_registration/src/KDTree.cpp
 KDTree.hpp

@@ -6,10 +6,26 @@
 
 #IncludeRegexTransform: 
 
+../include/KDTree.hpp
+eigen3/Eigen/Core
+-
+iostream
+-
+algorithm
+-
+limits
+-
+boost/shared_ptr.hpp
+-
+cmath
+-
+
 ../include/registration.hpp
 eigen3/Eigen/Dense
 -
 iostream
+-
+KDTree.hpp
 -
 
 /home/timmy/icp_registration/src/registration.cpp
