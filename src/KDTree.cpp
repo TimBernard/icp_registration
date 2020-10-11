@@ -61,12 +61,13 @@ Node* kd_tree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin
   if(pts_begin == pts_end){ return nullptr;}
 
   int axis = depth % dim;
-  
-  auto cmp_eig_vec = [axis](const Eigen::Vector3d& p1, const Eigen::Vector3d& p2){
-    return (p1[axis] < p2[axis]); };
-  auto pts_mid = (pts_begin + (pts_end-pts_begin)/2);
-  std::nth_element(pts_begin, pts_mid, pts_end, cmp_eig_vec);
 
+  // FInd the Median and use to split data 
+  std::vector<Eigen::Vector3d>::iterator pts_mid = (pts_begin + (pts_end-pts_begin)/2);
+  std::nth_element(pts_begin, pts_mid, pts_end, kd_tree::compare_vec(axis));
+
+  // New node is now the root of next subtree, with left and right trees defined from 
+  // 1st portion and 2nd portion of current point set
   Node* node = new Node(*pts_mid,depth);
   node->left = make_tree(pts_begin,pts_mid,depth+1);
   node->right = make_tree(pts_mid+1,pts_end,depth+1);

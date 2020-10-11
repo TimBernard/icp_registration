@@ -74,7 +74,16 @@ class kd_tree{
     Node* get_root() const{ return root; }
     Node* get_best() const{ return best; }
     void reset_best(){ best = nullptr; best_dist = std::numeric_limits<double>::max();}
-
+    
+    /* Comparison for Eigen::Vector3d along specified axis */
+    struct compare_vec {
+      compare_vec(int axis_): axis(axis_){}
+      bool operator()(const Eigen::Vector3d& pt1, const Eigen::Vector3d& pt2) {
+        return (pt1[axis] < pt2[axis]);
+      }
+      int axis;
+    };
+    
   private:
     Node* root;
     Node* best = nullptr;
