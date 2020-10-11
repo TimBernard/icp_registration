@@ -69,11 +69,15 @@ int main(int argc, char** argv){
     //std::cout << std::endl << point_cloud_one << std::endl; 
   }
 
-  /* Test out point cloud registration */
+  kd_tree my_tree(point_cloud_one);
+  Eigen::MatrixXd Final = reg::icp(my_tree, point_cloud_zero);
+
+  /*
+  // Test out point cloud registration //
   Eigen::MatrixXd Estimate = reg::rigidPointToPointSVD(point_cloud_zero,point_cloud_zero);
   std::cout << std::endl << Estimate << std::endl;
 
-  /* Test out Linear Transformations in Eigen */
+  // Test out Linear Transformations in Eigen //
   Eigen::Matrix4d my_mat(4,4);
   Eigen::Matrix3d my_rot = Eigen::Matrix3d::Random(3,3);  
   Eigen::Vector3d my_p = Eigen::Vector3d::Random(3,1);
@@ -96,12 +100,20 @@ int main(int argc, char** argv){
   std::cout << "Transformed points: " << std::endl;
   std::cout << new_my_points << std::endl;
 
+  //std::cout << "Now all at once" << std::endl;
+  //Eigen::MatrixXd all_together
+  
+  std::cout << "SUBTRACT" << std::endl;
+  std::cout << (my_points - reg::makeNotHomogeneous(new_my_points)) << std::endl;
+
+
+
   //Eigen::MatrixXd new_my_points_regular(3,10);
   //new_my_points_regular << new_my_points.row(0),  new_my_points.row(1), new_my_points.row(2);
   std::cout << "Now without the ones row on the bottom: " << std::endl;
   std::cout << reg::makeNotHomogeneous(new_my_points) << std::endl;
 
-  /* Test out finding closest points to transformed scene set in the model set */
+  Test out finding closest points to transformed scene set in the model set 
 
     //Eigen::MatrixXd my_CP = reg::findClosestPoints(point_cloud_one, point_cloud_zero);
   // std::cout << my_CP << std::endl;
@@ -112,7 +124,6 @@ int main(int argc, char** argv){
   for(it = my_points_.begin(); it != my_points_.end(); ++it){
     std::cout << *it << std::endl;
   }
-  /*------------------------------------------------------------------------------------------------------------------------------------------------------*/
   // Test out the tree and the querying with the KDTree 
 
   std::vector<Eigen::Vector3d> points_vec; 
@@ -132,7 +143,7 @@ int main(int argc, char** argv){
 
   kd_tree my_tree(point_cloud_one);
  
-  /* 
+   
   Eigen::Vector3d rando_point = Eigen::Vector3d::Random();
   std::cout << "Query point: " << rando_point << std::endl;
   Node* root = my_tree.get_root();
@@ -140,11 +151,17 @@ int main(int argc, char** argv){
   my_tree.get_nn(rando_point,root,0);
   std::cout << "Nearest: " << (root == NULL) << std::endl; 
   std::cout << "Real Nearest test: " << my_tree.get_best()->point << std::endl; 
-*/
 
   // tree test
   Eigen::MatrixXd my_CP = reg::findClosestPointsFaster(my_tree, point_cloud_zero);
+  
 
+  Eigen::MatrixXd mine(3,4);
+  mine << 1,2,3,4,1,2,3,4,1,2,3,4;
+  std::cout << "Matrix: " << std::endl << mine << std::endl;
+  std::cout << mine.colwise().squaredNorm() << std::endl;
+  std::cout << mine.colwise().squaredNorm().sum() << std::endl;
+  */
   return EXIT_SUCESS;
 }
 

@@ -19,9 +19,20 @@ namespace reg{
    */
   Eigen::MatrixXd rigidPointToPointSVD(const Eigen::MatrixXd& A,  const Eigen::MatrixXd& B);
   
-  //TODO: Function that iteratively finds point correspondences and registrations between two point clouds
+  /**
+   * Very simple version of Iterative Closest Point, TODO: Implement better
+   * initial transformation, remove worst point matches, use more sophisticated
+   * convergence criteria <---> has not been checked for performance 
+   *
+   * @param tree, kd-tree with model points
+   * @param scene_set, point cloud of scene points 
+   * @return F_reg, best current estimate of aligning transformation 
+   *
+   */
   Eigen::MatrixXd icp(kd_tree& tree, const Eigen::MatrixXd& scene_set);
 
+  //TODO: Take in error matrix and compute sum of squared error 
+  double computeError(const Eigen::MatrixXd& A);
   /**
    * Take the transformed scene point set and find the points in the model that are closest to 
    * the points from this current estimate: Uses linear search approach 

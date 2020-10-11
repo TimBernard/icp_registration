@@ -66,26 +66,61 @@ namespace reg{
     return SE3;  
   }
 
-  // TODO: ICP
+  /**
+   * Very simple version of Iterative Closest Point, TODO: Implement better
+   * initial transformation, remove worst point matches, use more sophisticated
+   * convergence criteria <---> has not been checked for performance 
+   *
+   * @param tree, kd-tree with model points
+   * @param scene_set, point cloud of scene points 
+   * @return F_reg, best current estimate of aligning transformation 
+   *
+   */
   Eigen::MatrixXd icp(kd_tree& tree, const Eigen::MatrixXd& scene_set){
 
     // Initial Pose 
-    Eigen::MatrixXd initial_pose(4,4);
-    
+    Eigen::MatrixXd F_reg = Eigen::MatrixXd::Identity(4,4);
+
+    // Useful Constants
+    int max_iterations = 50;
+    double threshold = 0.1;
       
+    // Apply intial transformation to the scene points
+    Eigen::MatrixXd new_scene_set = F_reg * scene_set.colwise().homogeneous();
+    new_scene_set = reg::makeNotHomogeneous(new_scene_set);
+    
+    for(int i=0; i < max_iterations; ++i){
+      
+      std::cout << "Iteration: " << (i+1) << " ";
 
+      // Find the closest points to the newly transformed scene
+      Eigen::MatrixXd CP = reg::findClosestPointsFaster(tree, new_scene_set);
+      
+      // Compute Alignment 
+      F_reg = reg::rigidPointToPointSVD(new_scene_set, CP);
 
+      // Apply Alignment and compute error 
+      new_scene_set = F_reg * scene_set.colwise().homogeneous();
+      new_scene_set = reg::makeNotHomogeneous(new_scene_set);
+      Eigen::MatrixXd diff = CP - new_scene_set;
+      double error = reg::computeError(diff);
 
+      std::cout << "Error (sum of squared difference) :" <<  error << std::endl;
+      
+      if(error <= threshold){
+        std::cout << "Final Error (sum of squared difference) :" <<  error << std::endl;
+        break;
+      }
+    }      
+    
+    return F_reg;
+  }
 
+  // sum of squared error 
+  double computeError(const Eigen::MatrixXd& error_set){
 
-
-
-
-
-    // Initial Error
-    Eigen::MatrixXd reg_final(4,4);
-    reg_final = Eigen::MatrixXd::Random(4,4);
-    return reg_final;
+    int N = error_set.cols();
+    return (error_set.colwise().squaredNorm().sum())/N;
   }
 
   /**
@@ -103,8 +138,7 @@ namespace reg{
 
     //Eigen::MatrixXd CP(3,(int)new_scene_set.cols());
     Eigen::MatrixXd CP(3,Ns);
-    Eigen::Vector3d scene_point;
-
+    Eigen::Vector3d scene_point; 
     std::vector<double> distances;
     distances.resize(Nm);
     for(int i = 0; i < Ns; ++i){

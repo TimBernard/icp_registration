@@ -52,7 +52,6 @@ kd_tree::~kd_tree(){
  * @param pts_begin an iterator of the beginning of a vector of points
  * @param pts_end an iterator to the end of a vector of points
  * @param depth the current depth of the tree   
- * @return a pointer to the root of the tree
  */
 Node* kd_tree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
                          const std::vector<Eigen::Vector3d>::iterator& pts_end,
