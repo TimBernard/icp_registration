@@ -91,7 +91,7 @@ namespace reg{
     
     for(int i=0; i < max_iterations; ++i){
       
-      std::cout << "Iteration: " << (i+1) << " ";
+      std::cout << "Iteration " << (i+1) << ": ";
 
       // Find the closest points to the newly transformed scene
       Eigen::MatrixXd CP = reg::findClosestPointsFaster(tree, new_scene_set);
@@ -105,7 +105,7 @@ namespace reg{
       Eigen::MatrixXd diff = CP - new_scene_set;
       double error = reg::computeError(diff);
 
-      std::cout << "Error (sum of squared difference) :" <<  error << std::endl;
+      std::cout << "Error (sum of squared difference): " <<  error << std::endl;
       
       if(error <= threshold){
         std::cout << "Final Error (sum of squared difference) :" <<  error << std::endl;

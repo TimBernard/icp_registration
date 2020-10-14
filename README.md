@@ -4,7 +4,8 @@ An (in-progress) implementation of iterative closest point using c++
 
 ## Usage
 
-Currently, main.cpp in root directory loads two mis-aligned point clouds[[1]](#1) and runs icp to return a transformation
+* Currently, main.cpp in root directory loads two mis-aligned point clouds[[1]](#1) and runs icp to return a transformation
+* Tested on Ubuntu 16.04 
 
 ## References 
 <a id="1">[1]</a> 

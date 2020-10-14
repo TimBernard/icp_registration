@@ -9,8 +9,6 @@
 #include <cstring>
 #include <cerrno> 
 
-#define EXIT_SUCESS 0
-
 #include "include/KDTree.hpp"
 #include "include/data.hpp"
 #include "include/registration.hpp"
@@ -74,7 +72,7 @@ int main(int argc, char** argv){
   Eigen::MatrixXd Final = reg::icp(my_tree, point_cloud_zero);
   
   std::cout << "Final Transformation: " << Final << std::endl;
-  return EXIT_SUCESS;
+  return EXIT_SUCCESS;
 }
 
 
