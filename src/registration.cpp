@@ -3,7 +3,7 @@
 namespace reg{  
 
   /**
-   * Solve for rigid transformation between two 3D point sets using Singular Value Decomposition. See:
+   * Solve for rigid transformation between two 3D point sets using Singular Value Decomposition:
    *
    * Arun KS, Huang TS, Blostein SD. Least-squares fitting of two 3-d point sets.                                                                                                      
    * IEEE Trans Pattern Anal Mach Intell. 1987;9(5):698-700. doi:10.1109/tpami.1987.4767965
@@ -125,7 +125,7 @@ namespace reg{
 
   /**
    * Take the transformed scene point set and find the points in the model that are closest to 
-   * the points from this current estimate: Uses linear search approach 
+   * the points from this current estimate: Uses linear search  
    *
    * @param model_set the set of points from the model cloud
    * @param new_scene_set the set of points from the transformed scene
@@ -192,8 +192,8 @@ namespace reg{
   /**
    * Make set of homogenous points non-homogeneous 4xN -> 3xN
    * 
-   * @param points set of homogeneous coordinates
-   * @return points_ set of non-homogeneous coordinates
+   * @param points homogeneous coordinates
+   * @return points_ non-homogeneous coordinates
    */
   Eigen::MatrixXd makeNotHomogeneous(const Eigen::MatrixXd& points){
 
@@ -204,10 +204,9 @@ namespace reg{
 
   /**
    * Make set of non-homogenous points homogeneous 3xN -> 4xN,
-   * appending 1 to each row 
    * 
-   * @param points set of non-homogeneous coordinates
-   * @return points_ set of homogeneous coordinates
+   * @param points non-homogeneous coordinates
+   * @return points_ homogeneous coordinates
    */
   Eigen::MatrixXd makeHomogeneous(const Eigen::MatrixXd& points){
 

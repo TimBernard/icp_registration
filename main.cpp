@@ -4,7 +4,6 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <boost/shared_ptr.hpp>
 #include <eigen3/Eigen/Dense>
 #include <cstring>
 #include <cerrno> 
@@ -17,11 +16,6 @@ typedef Eigen::Matrix<double,1,3> row_vec;
 
 int main(int argc, char** argv){
 
-  // Test out c+11 and boost
-  std::shared_ptr<std::string> string_ptr = std::make_shared<std::string>("Hello CMake!");
-  std::cout << *string_ptr << std::endl;
-  boost::shared_ptr<std::shared_ptr<std::string>> string_ptr_ptr;
-  
   /* Import First Cloud */
   std::ifstream file_zero;
   std::string path_zero = "/home/timmy/icp_registration/practice_data/cloud_0.vtk";

@@ -1,8 +1,6 @@
 #include <KDTree.hpp>
 
-/**
- * Default constructor 
- */
+// Default constructor 
 kd_tree::kd_tree(){
 
   root = nullptr;
@@ -35,9 +33,7 @@ kd_tree::kd_tree(const Eigen::MatrixXd& points){
   std::cout << "Tree built" << std::endl;
 }
 
-/**
- * Destroys tree and frees memory
- */
+// Destroy tree, free mem
 kd_tree::~kd_tree(){ 
 
   delete root;

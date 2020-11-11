@@ -28,12 +28,12 @@ struct Node{
 /**
  * Stores root of KD Tree and estimates of current "best" point in terms of 
  * distance (for nn lookup). Has methods for creating tree from vector of points
- * and for doing a nearest neighbor search. 
+ * and for doing nn search. 
  */
 class kd_tree{
   public:
 
-    /** Default constructor */
+    // Default constructor
     kd_tree();
 
     /** 
@@ -44,7 +44,7 @@ class kd_tree{
      */
     kd_tree(const Eigen::MatrixXd& points);
 
-    /** Destroys tree and frees memory */
+    // Destroys tree and frees memory
     ~kd_tree();
 
     /**
@@ -70,12 +70,12 @@ class kd_tree{
      */
     void get_nn(const Eigen::Vector3d& query, Node* T, int depth);  
 
-    /* Helper functions */
+    // Helper functions
     Node* get_root() const{ return root; }
     Node* get_best() const{ return best; }
     void reset_best(){ best = nullptr; best_dist = std::numeric_limits<double>::max();}
     
-    /* Comparison for Eigen::Vector3d along specified axis */
+    // Comparison for Eigen::Vector3d along specified axis
     struct compare_vec {
       compare_vec(int axis_): axis(axis_){}
       bool operator()(const Eigen::Vector3d& pt1, const Eigen::Vector3d& pt2) {
