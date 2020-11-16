@@ -18,18 +18,16 @@ namespace reg{
     int n_B = B.cols();
     int n;
     
-    if(n_A != n_B){std::cout << "There is a problem" << std::endl;}
+    if(n_A != n_B){std::cout << "Point sets should be of the same size" << std::endl;}
     else{n = n_A;}
     
-    // Calculate centroid of each point set 
+    // Center point sets
     Eigen::Vector3d a_centroid = A.rowwise().mean();
     Eigen::Vector3d b_centroid = B.rowwise().mean();
-    
-    // Centering 
     Eigen::MatrixXd A_prime = A.colwise() - a_centroid;
     Eigen::MatrixXd B_prime = B.colwise() - b_centroid;  
     
-    // Find 3x3 Matrix 
+    // Find 3x3 Matrix, H
     Eigen::Matrix3d H;
     int x = 0, y = 1, z = 2;
     
@@ -58,7 +56,7 @@ namespace reg{
       }
     }
     
-    // Create Full Transformation 
+    // Full Transformation with translation
     Eigen::Vector3d p = b_centroid -(R*a_centroid);
     Eigen::MatrixXd SE3(4,4);
     SE3 << R, p, 0, 0, 0, 1;
