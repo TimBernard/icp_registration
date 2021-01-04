@@ -58,7 +58,7 @@ Node* kd_tree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin
 
   int axis = depth % dim;
 
-  // FInd the Median and use to split data 
+  // Find the Median and use to split data 
   std::vector<Eigen::Vector3d>::iterator pts_mid = (pts_begin + (pts_end-pts_begin)/2);
   std::nth_element(pts_begin, pts_mid, pts_end, kd_tree::compare_vec(axis));
 

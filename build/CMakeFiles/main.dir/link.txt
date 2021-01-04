@@ -1,1 +1,0 @@
-/usr/bin/c++    -Wall   CMakeFiles/main.dir/main.cpp.o  -o bin/main lib/libregistration.a lib/libKDTree.a lib/libdata.a 

@@ -15,7 +15,7 @@ include_directories(EIGEN3_INCLUDE_DIR)
 
 # Specify compiler flags
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
 
 # Get system information (possibly for different platforms)
 message("System: ${CMAKE_SYSTEM_NAME}, Complete System Name: ${CMAKE_SYSTEM} ")

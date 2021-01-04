@@ -3,6 +3,7 @@
 
 #include <eigen3/Eigen/Dense>
 #include <iostream>
+#include <typeinfo>
 #include <KDTree.hpp>
 
 namespace reg{
@@ -33,6 +34,7 @@ namespace reg{
 
   //TODO: Take in error matrix and compute sum of squared error 
   double computeError(const Eigen::MatrixXd& A);
+
   /**
    * Take the transformed scene point set and find the points in the model that are closest to 
    * the points from this current estimate: Uses linear search 

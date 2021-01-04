@@ -12,14 +12,10 @@ namespace reg{
    * @param B set of 3D points 
    * @return SE3 the transformation that best aligns these two point clouds 
    */
-  Eigen::MatrixXd rigidPointToPointSVD(const Eigen::MatrixXd& A,  const Eigen::MatrixXd& B){
+  Eigen::MatrixXd rigidPointToPointSVD(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B){
     
-    int n_A = A.cols();
-    int n_B = B.cols();
-    int n;
-    
-    if(n_A != n_B){std::cout << "Point sets should be of the same size" << std::endl;}
-    else{n = n_A;}
+    assert (A.cols() == B.cols());
+    int n = A.cols();
     
     // Center point sets
     Eigen::Vector3d a_centroid = A.rowwise().mean();
@@ -118,6 +114,8 @@ namespace reg{
   double computeError(const Eigen::MatrixXd& error_set){
 
     int N = error_set.cols();
+    // std::cout << "Error Matrix Rows: " << error_set.colwise().squaredNorm().rows() << std::endl;
+    // std::cout << "Error Matrix Cols: " << error_set.colwise().squaredNorm().cols() << std::endl;
     return (error_set.colwise().squaredNorm().sum())/N;
   }
 
@@ -173,7 +171,6 @@ namespace reg{
   Eigen::MatrixXd findClosestPointsFaster(kd_tree& tree, const Eigen::MatrixXd& new_scene_set){
     
     int Ns = new_scene_set.cols();
-    //Eigen::MatrixXd CP(3,(int)new_scene_set.cols());
     Eigen::MatrixXd CP(3,Ns);
     
     // Traverse through each scene point to find the closest in the model 

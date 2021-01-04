@@ -65,7 +65,7 @@ int main(int argc, char** argv){
   kd_tree my_tree(point_cloud_one);
   Eigen::MatrixXd Final = reg::icp(my_tree, point_cloud_zero);
   
-  std::cout << "Final Transformation: " << Final << std::endl;
+  std::cout << "Final Transformation: \n" << Final << std::endl;
   return EXIT_SUCCESS;
 }
 

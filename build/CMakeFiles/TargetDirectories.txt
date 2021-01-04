@@ -1,7 +1,0 @@
-/home/timmy/icp_registration/build/CMakeFiles/edit_cache.dir
-/home/timmy/icp_registration/build/CMakeFiles/run.dir
-/home/timmy/icp_registration/build/CMakeFiles/rebuild_cache.dir
-/home/timmy/icp_registration/build/CMakeFiles/registration.dir
-/home/timmy/icp_registration/build/CMakeFiles/KDTree.dir
-/home/timmy/icp_registration/build/CMakeFiles/data.dir
-/home/timmy/icp_registration/build/CMakeFiles/main.dir

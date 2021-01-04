@@ -1,2 +1,0 @@
-/usr/bin/ar qc lib/libKDTree.a  CMakeFiles/KDTree.dir/src/KDTree.cpp.o
-/usr/bin/ranlib lib/libKDTree.a
