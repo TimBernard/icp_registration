@@ -4,6 +4,7 @@
 *.un
 
 # Ignore CMake files 
+build/*	
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
