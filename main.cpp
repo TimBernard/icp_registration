@@ -18,6 +18,7 @@ typedef Eigen::Matrix<double,1,3> row_vec;
 int main(int argc, char** argv){
 
   std::cout << PCL_VERSION_PRETTY << std::endl;
+
   /* Import First Cloud */
   std::ifstream file_zero;
   std::string path_zero = "/home/timmy/icp_registration/practice_data/cloud_0.vtk";
@@ -70,17 +71,3 @@ int main(int argc, char** argv){
   std::cout << "Final Transformation: \n" << Final << std::endl;
   return EXIT_SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
