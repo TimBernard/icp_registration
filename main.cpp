@@ -7,6 +7,7 @@
 #include <eigen3/Eigen/Dense>
 #include <cstring>
 #include <cerrno> 
+#include <pcl/pcl_config.h>
 
 #include "include/KDTree.hpp"
 #include "include/data.hpp"
@@ -16,6 +17,7 @@ typedef Eigen::Matrix<double,1,3> row_vec;
 
 int main(int argc, char** argv){
 
+  std::cout << PCL_VERSION_PRETTY << std::endl;
   /* Import First Cloud */
   std::ifstream file_zero;
   std::string path_zero = "/home/timmy/icp_registration/practice_data/cloud_0.vtk";
