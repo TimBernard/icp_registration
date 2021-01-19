@@ -74,6 +74,8 @@ namespace reg{
 
     // Initial Pose 
     Eigen::MatrixXd F_reg = Eigen::MatrixXd::Identity(4,4);
+    F_reg.block(0,0,3,3)*=-1;
+    std::cout << "Initial guess: " << std::endl << F_reg << std::endl;
 
     // Useful Constants
     int max_iterations = 50;
@@ -270,47 +272,3 @@ namespace reg{
     return points_; 
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //TODO 
-  // function to discard points that are the worst matches 
-  // the corresponding columns of the matrix are removed
-  void discardPoint(Eigen::MatrixXd& mat, std::vector<int> indices){
-    
-    std::vector<int>::iterator it = indices.begin();
-    for(; it != indices.end(); ++it){
-      int colToRemove = *it;
-      int numCols = mat.cols() -1;
-      if( colToRemove < numCols ){
-        mat.block(0,colToRemove,mat.rows(),numCols-colToRemove) = mat.rightCols(numCols-colToRemove);
-      }
-      mat.conservativeResize(mat.rows(),numCols);
-    }
-  }
