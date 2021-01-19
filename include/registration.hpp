@@ -32,8 +32,30 @@ namespace reg{
    */
   Eigen::MatrixXd icp(kd_tree& tree, const Eigen::MatrixXd& scene_set);
 
-  //TODO: Take in error matrix and compute sum of squared error 
-  double computeError(const Eigen::MatrixXd& A);
+  /**
+   * Compute MSE error across set of points, and then discard worst 10% of points
+   *
+   * @param error_set, the difference between scene and closest model points 
+   * @param point_set, the scene points
+   */
+  double computeError(Eigen::MatrixXd& error_set, Eigen::MatrixXd& point_set);
+
+
+  /**
+   * Remove column from Eigen matrix from vector
+   *
+   * @param mat, matrix from Eigen lib
+   * @param index, column location to do removal 
+   */
+  void discardPoint(Eigen::MatrixXd& mat, unsigned int index);
+
+  /**
+   * Remove element from vector
+   *
+   * @param vec, vector from Eigen lib
+   * @param index, location to do removal 
+   */
+  void removeElement(Eigen::VectorXd& vec, unsigned int index);
 
   /**
    * Take the transformed scene point set and find the points in the model that are closest to 

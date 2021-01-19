@@ -10,9 +10,11 @@ endif()
 # Find existing libraries
 find_package(Eigen3 REQUIRED)
 find_package(PCL REQUIRED)
+
+# For Ubuntu 16.04, to address bug with PCL
 list(REMOVE_ITEM PCL_LIBRARIES "vtkproj4")
 
-# Inlclude directories 
+# Include directories 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(${PCL_INCLUDE_DIRS})
 

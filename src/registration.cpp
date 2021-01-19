@@ -38,7 +38,7 @@ namespace reg{
     Eigen::JacobiSVD<Eigen::Matrix3d> svd(H, Eigen::ComputeFullU | Eigen::ComputeFullV);
     Eigen::Matrix3d U = svd.matrixU();
     Eigen::Matrix3d V = svd.matrixV();
-    
+
     // Rotation
     Eigen::Matrix3d R = U * V.transpose();
     
@@ -77,7 +77,7 @@ namespace reg{
 
     // Useful Constants
     int max_iterations = 50;
-    double threshold = 0.1;
+    double threshold = 0.001;
       
     // Apply intial transformation to the scene points
     Eigen::MatrixXd new_scene_set = F_reg * scene_set.colwise().homogeneous();
@@ -89,20 +89,26 @@ namespace reg{
 
       // Find the closest points to the newly transformed scene
       Eigen::MatrixXd CP = reg::findClosestPointsFaster(tree, new_scene_set);
-      
+      /* DEBUG */ //std::cout << "Iteration " << (i+1) << ": " << "Point correspondence tree search complete" << std::endl; 
+
       // Compute Alignment 
       F_reg = reg::rigidPointToPointSVD(new_scene_set, CP);
+      std::cout << "Current registration: " << std::endl<< F_reg << std::endl;
+      /* DEBUG */ //std::cout << "Iteration " << (i+1) << ": " <<  "Aligment computed" << std::endl; 
 
       // Apply Alignment and compute error 
-      new_scene_set = F_reg * scene_set.colwise().homogeneous();
+      new_scene_set = F_reg * new_scene_set.colwise().homogeneous();
+      /* DEBUG */ //std::cout << "Iteration " << (i+1) << ": " << "Aligment applied" << std::endl; 
+
       new_scene_set = reg::makeNotHomogeneous(new_scene_set);
       Eigen::MatrixXd diff = CP - new_scene_set;
-      double error = reg::computeError(diff);
+      double error = reg::computeError(diff,new_scene_set); 
+      /* DEBUG */ //std::cout << "Iteration " << (i+1) << ": " << "Error computed and points discarded" << std::endl; 
 
-      std::cout << "Error (sum of squared difference): " <<  error << std::endl;
+      std::cout << "Error (MSE): " <<  error << std::endl;
       
       if(error <= threshold){
-        std::cout << "Final Error (sum of squared difference) :" <<  error << std::endl;
+        std::cout << "Final Error (MSE):" <<  error << std::endl;
         break;
       }
     }      
@@ -110,13 +116,66 @@ namespace reg{
     return F_reg;
   }
 
-  // sum of squared error 
-  double computeError(const Eigen::MatrixXd& error_set){
+  /**
+   * Compute MSE error across set of points, and then discard worst 10% of points
+   *
+   * @param error_set, the difference between scene and closest model points 
+   * @param point_set, the scene points
+   */
+  double computeError(Eigen::MatrixXd& error_set, Eigen::MatrixXd& point_set){
 
     int N = error_set.cols();
-    // std::cout << "Error Matrix Rows: " << error_set.colwise().squaredNorm().rows() << std::endl;
-    // std::cout << "Error Matrix Cols: " << error_set.colwise().squaredNorm().cols() << std::endl;
-    return (error_set.colwise().squaredNorm().sum())/N;
+    int iterations = (int)(N*0.1);
+    Eigen::VectorXd squaredDiff = error_set.colwise().squaredNorm();
+
+    // Find maximum error values and remove from the point set
+    unsigned int maxIndex = 0; 
+    unsigned int* maxIndex_ptr = &maxIndex;
+    
+    for(int i=0; i < iterations; ++i){
+      squaredDiff.maxCoeff(maxIndex_ptr);
+      reg::removeElement(squaredDiff, *maxIndex_ptr);
+      reg::discardPoint(point_set, *maxIndex_ptr);
+    }
+    
+    std::cout << "Current Number of scene points being used: " << point_set.cols() << std::endl;
+    ///std::cout << "\nNew point set matrix, ROWS:" << point_set.rows() << std::endl;
+    ///std::cout << "New point set matrix, COLS:" << point_set.cols() << std::endl;
+    
+    double mseError = squaredDiff.sum()/N;
+    return mseError;
+  }
+  
+  /**
+   * Remove column from Eigen matrix from vector
+   *
+   * @param mat, matrix from Eigen lib
+   * @param index, column location to do removal 
+   */
+  void discardPoint(Eigen::MatrixXd& mat, unsigned int index){
+
+    unsigned int colToRemove = index;
+    unsigned int numCols = mat.cols() -1;
+    if( colToRemove < numCols ){
+      mat.block(0,colToRemove,mat.rows(),numCols-colToRemove) = mat.rightCols(numCols-colToRemove);
+    }
+    mat.conservativeResize(mat.rows(),numCols);
+  }
+  
+  /**
+   * Remove element from vector
+   *
+   * @param vec, vector from Eigen lib
+   * @param index, location to do removal 
+   */
+  void removeElement(Eigen::VectorXd& vec, unsigned int index){
+
+    unsigned int numRows = vec.rows()-1;
+    if (index < numRows){
+      vec.segment(index,numRows-index) = vec.tail(numRows-index);
+    }
+    Eigen::VectorXd temp_vec = vec.head(numRows);
+    vec = temp_vec;
   }
 
   /**
@@ -211,3 +270,47 @@ namespace reg{
     return points_; 
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //TODO 
+  // function to discard points that are the worst matches 
+  // the corresponding columns of the matrix are removed
+  void discardPoint(Eigen::MatrixXd& mat, std::vector<int> indices){
+    
+    std::vector<int>::iterator it = indices.begin();
+    for(; it != indices.end(); ++it){
+      int colToRemove = *it;
+      int numCols = mat.cols() -1;
+      if( colToRemove < numCols ){
+        mat.block(0,colToRemove,mat.rows(),numCols-colToRemove) = mat.rightCols(numCols-colToRemove);
+      }
+      mat.conservativeResize(mat.rows(),numCols);
+    }
+  }
