@@ -40,7 +40,6 @@ namespace reg{
    */
   double computeError(Eigen::MatrixXd& error_set, Eigen::MatrixXd& point_set);
 
-
   /**
    * Remove column from Eigen matrix from vector
    *

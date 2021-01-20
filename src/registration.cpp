@@ -26,7 +26,6 @@ namespace reg{
     // Find 3x3 Matrix, H
     Eigen::Matrix3d H;
     int x = 0, y = 1, z = 2;
-    
     for(int i = 0; i < n; ++i){
       Eigen::Matrix3d mat;
       mat << A_prime(x,i)*B_prime(x,i), A_prime(x,i)*B_prime(y,i), A_prime(x,i)*B_prime(z,i),
@@ -41,7 +40,6 @@ namespace reg{
 
     // Rotation
     Eigen::Matrix3d R = U * V.transpose();
-    
     if(R.determinant() < 0){
       std::cout << "Condition reached" << std::endl;
       V.col(2)*=-1;
@@ -87,25 +85,21 @@ namespace reg{
     
     for(int i=0; i < max_iterations; ++i){
       
-      std::cout << "Iteration " << (i+1) << ": ";
+      std::cout << "\n--------------------------------------" << std::endl;
+      std::cout << "Iteration " << (i+1) << " " << std::endl; 
 
       // Find the closest points to the newly transformed scene
       Eigen::MatrixXd CP = reg::findClosestPointsFaster(tree, new_scene_set);
-      /* DEBUG */ //std::cout << "Iteration " << (i+1) << ": " << "Point correspondence tree search complete" << std::endl; 
 
       // Compute Alignment 
       F_reg = reg::rigidPointToPointSVD(new_scene_set, CP);
-      std::cout << "Current registration: " << std::endl<< F_reg << std::endl;
-      /* DEBUG */ //std::cout << "Iteration " << (i+1) << ": " <<  "Aligment computed" << std::endl; 
+      std::cout << "Current transform estimate: " << std::endl<< F_reg << std::endl;
 
       // Apply Alignment and compute error 
       new_scene_set = F_reg * new_scene_set.colwise().homogeneous();
-      /* DEBUG */ //std::cout << "Iteration " << (i+1) << ": " << "Aligment applied" << std::endl; 
-
       new_scene_set = reg::makeNotHomogeneous(new_scene_set);
       Eigen::MatrixXd diff = CP - new_scene_set;
       double error = reg::computeError(diff,new_scene_set); 
-      /* DEBUG */ //std::cout << "Iteration " << (i+1) << ": " << "Error computed and points discarded" << std::endl; 
 
       std::cout << "Error (MSE): " <<  error << std::endl;
       
@@ -141,9 +135,6 @@ namespace reg{
     }
     
     std::cout << "Current Number of scene points being used: " << point_set.cols() << std::endl;
-    ///std::cout << "\nNew point set matrix, ROWS:" << point_set.rows() << std::endl;
-    ///std::cout << "New point set matrix, COLS:" << point_set.cols() << std::endl;
-    
     double mseError = squaredDiff.sum()/N;
     return mseError;
   }

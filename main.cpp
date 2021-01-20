@@ -13,7 +13,6 @@
 #include "include/data.hpp"
 #include "include/registration.hpp"
 
-typedef Eigen::Matrix<double,1,3> row_vec;
 
 int main(int argc, char** argv){
 
