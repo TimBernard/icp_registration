@@ -23,8 +23,8 @@ class pointcloud_viewer {
  * cloud viewer class
  *
  * methods: 
- *  take in Eigen matrix (representing a 3xN point cloud) and convert that into a PCL object (resarch to find  which one is best)
- *  take PCL object made in previous step and use that to create a 
+ *  take in Eigen matrix (representing a 3xN point cloud) and convert that into a PCL object 
+ *  take PCL object made in previous step and use that to visualize code 
  *
  *
  */
