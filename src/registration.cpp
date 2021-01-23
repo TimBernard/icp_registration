@@ -3,11 +3,8 @@
 namespace reg{  
 
   /**
-   * Solve for rigid transformation between two 3D point sets using Singular Value Decomposition:
+   * Solve for rigid transformation between two 3D point sets using Singular Value Decomposition
    *
-   * Arun KS, Huang TS, Blostein SD. Least-squares fitting of two 3-d point sets.                                                                                                      
-   * IEEE Trans Pattern Anal Mach Intell. 1987;9(5):698-700. doi:10.1109/tpami.1987.4767965
-   * 
    * @param A set of 3D points
    * @param B set of 3D points 
    * @return SE3 the transformation that best aligns these two point clouds 
