@@ -8,13 +8,6 @@
 #include <cstring>
 #include <cerrno> 
 
-#include <pcl/pcl_config.h>
-#include <pcl/common/common_headers.h>
-#include <pcl/features/normal_3d.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/console/parse.h>
-
 #include "include/KDTree.hpp"
 #include "include/data.hpp"
 #include "include/registration.hpp"

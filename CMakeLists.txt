@@ -60,4 +60,3 @@ add_custom_target(run
 	DEPENDS main
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIRECTORY}
 	)
-
