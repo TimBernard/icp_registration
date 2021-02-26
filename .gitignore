@@ -6,6 +6,7 @@
 # Ignore CMake files 
 build/bin/
 build/lib/	
+build/
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
