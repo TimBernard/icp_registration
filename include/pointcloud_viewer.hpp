@@ -4,31 +4,16 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/console/parse.h>
+#include <eigen3/Eigen/Dense>
+
+#include <thread>
+using namespace std::chrono_literals;
 
 
-class pointcloud_viewer {
+//TODO: Convert Eigen matrices (of points) to pcl point cloud (pointers)
+void eigenToPcl(Eigen::MatrixXd& point_cloud_one, Eigen::MatrixXd& point_cloud_two,
+                pcl::PointCloud<pcl::PointXYZ>::Ptr pc_one_ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr pc_two_ptr);
+
+//TODO: Create pcl visualization viewer and add two point clouds 
+pcl::visualization::PCLVisualizer::Ptr twoCloudVis (pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud_one, pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud_two);
   
-  public:
-    // Default constructor 
-    pointcloud_viewer();
-
-    // Desctructor 
-    ~pointcloud_viewer();
-    
-
-
-
-};
-/*
- * cloud viewer class
- *
- * methods: 
- *  take in Eigen matrix (representing a 3xN point cloud) and convert that into a PCL object 
- *  take PCL object made in previous step and use that to visualize code 
- *
- *
- */
-
-
-
-

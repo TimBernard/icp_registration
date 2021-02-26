@@ -69,12 +69,24 @@ namespace reg{
 
     // Initial Pose 
     Eigen::MatrixXd F_reg = Eigen::MatrixXd::Identity(4,4);
-    F_reg.block(0,0,3,3)*=-1;
+    
+    // Adjust Initial Rotation 
+    Eigen::Matrix3d InitRotation;
+    double theta = 2*M_PI; 
+    InitRotation << cos(theta), -sin(theta), 0,
+                    sin(theta), cos(theta), 0,
+                    0, 0, 1;
+    F_reg.topLeftCorner(3,3) = InitRotation;
+
+    // Adjust Initial Translation 
+    F_reg.col(3).setOnes(); 
+    F_reg.topRightCorner(3,1) *= 1.0;
+
     std::cout << "Initial guess: " << std::endl << F_reg << std::endl;
 
     // Useful Constants
-    int max_iterations = 50;
-    double threshold = 0.001;
+    int max_iterations = 200;
+    double threshold = 1e-6; 
       
     // Apply intial transformation to the scene points
     Eigen::MatrixXd new_scene_set = F_reg * scene_set.colwise().homogeneous();
