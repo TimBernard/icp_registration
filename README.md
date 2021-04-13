@@ -4,8 +4,14 @@ An (in-progress) implementation of iterative closest point using c++
 
 ## Usage
 
-* Currently, main.cpp in root directory loads two mis-aligned point clouds[[1]](#1) and runs icp to return a transformation
+* Currently, main.cpp in root directory loads two mis-aligned point clouds[[1]](#1) and runs icp to return an aligning transformation
+* Opens PCL Visualizer simultaneously to visualize alginment of "scene" cloud to "model" cloud
 * Tested on Ubuntu 16.04 
+
+## Dependcies
+
+* PCL 
+* Eigen3 
 
 ## References 
 <a id="1">[1]</a> 
