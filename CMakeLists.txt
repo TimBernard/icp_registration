@@ -23,13 +23,13 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${EIGEN3_DEFINITIONS})
 add_definitions(${PCL_DEFINITIONS})
 	
-# For Ubuntu 16.04, to address bug with PCL
+# For Ubuntu 16.04, to address vtk bug with PCL
 list(REMOVE_ITEM PCL_LIBRARIES "vtkproj4")
 
 # Specify compiler flags
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
+#set(CMAKE_CXX_STANDARD 14)
+#set(CMAKE_CXX_STANDARD_REQUIRED 14)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2 -std=c++17")
 
 # Get system information (possibly for different platforms)
 message("System: ${CMAKE_SYSTEM_NAME}, Complete System Name: ${CMAKE_SYSTEM} ")

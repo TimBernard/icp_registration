@@ -13,3 +13,6 @@ F. Pomerleau, M. Liu, F. Colas, and R. Siegwart, Challenging data sets for point
 
 <a id="2">[2]</a> 
 Y.  Liu  and  T.  Bernard.   Programming  assignment  4. Johns  Hopkins  University  Computer Integrated Surgery, 10 2019.
+
+<a id="3">[3]</a> 
+https://rosettacode.org/wiki/K-d_tree

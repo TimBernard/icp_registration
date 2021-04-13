@@ -1,5 +1,9 @@
 #include "registration.hpp"
 
+
+
+
+
 namespace reg{  
 
   /**
@@ -65,34 +69,41 @@ namespace reg{
    * @return F_reg, best current estimate of aligning transformation 
    *
    */
-  Eigen::MatrixXd icp(kd_tree& tree, const Eigen::MatrixXd& scene_set){
+  Eigen::MatrixXd icp(kd_tree& tree, /*const*/ Eigen::MatrixXd& model_set, /*const*/ Eigen::MatrixXd& scene_set){
 
     // Initial Pose 
     Eigen::MatrixXd F_reg = Eigen::MatrixXd::Identity(4,4);
     
     // Adjust Initial Rotation 
     Eigen::Matrix3d InitRotation;
-    double theta = 2*M_PI; 
+    // InitRotation = Matrix::Identity(3,3); 
+    double theta = 0.5*M_PI; //0.25*M_PI; 
     InitRotation << cos(theta), -sin(theta), 0,
                     sin(theta), cos(theta), 0,
                     0, 0, 1;
     F_reg.topLeftCorner(3,3) = InitRotation;
 
-    // Adjust Initial Translation 
-    F_reg.col(3).setOnes(); 
-    F_reg.topRightCorner(3,1) *= 1.0;
+    // // Adjust Initial Translation 
+    // F_reg.col(3).setOnes(); 
+    // F_reg.topRightCorner(3,1) *= 1.0;
 
     std::cout << "Initial guess: " << std::endl << F_reg << std::endl;
 
     // Useful Constants
-    int max_iterations = 200;
-    double threshold = 1e-6; 
+    int max_iterations = 50;
+    double threshold = 0.1; 
       
     // Apply intial transformation to the scene points
-    Eigen::MatrixXd new_scene_set = F_reg * scene_set.colwise().homogeneous();
-    new_scene_set = reg::makeNotHomogeneous(new_scene_set);
+    Eigen::MatrixXd new_scene_set = scene_set;
+    reg::multiply(F_reg, new_scene_set);
+
+    // start visualizer thread 
+    std::thread visualizerThread(visualizeClouds, std::ref(model_set),std::ref(new_scene_set));
     
     for(int i=0; i < max_iterations; ++i){
+
+      //  std::lock_guard<std::mutex> lg(sceneUpdateMutex);
+      sceneUpdate = true;
       
       std::cout << "\n--------------------------------------" << std::endl;
       std::cout << "Iteration " << (i+1) << " " << std::endl; 
@@ -102,21 +113,22 @@ namespace reg{
 
       // Compute Alignment 
       F_reg = reg::rigidPointToPointSVD(new_scene_set, CP);
-      std::cout << "Current transform estimate: " << std::endl<< F_reg << std::endl;
+      //std::cout << "Current transform estimate: " << std::endl<< F_reg << std::endl;
 
-      // Apply Alignment and compute error 
-      new_scene_set = F_reg * new_scene_set.colwise().homogeneous();
-      new_scene_set = reg::makeNotHomogeneous(new_scene_set);
+      reg::multiply(F_reg, new_scene_set);
+        
       Eigen::MatrixXd diff = CP - new_scene_set;
       double error = reg::computeError(diff,new_scene_set); 
-
       std::cout << "Error (MSE): " <<  error << std::endl;
-      
+
       if(error <= threshold){
         std::cout << "Final Error (MSE):" <<  error << std::endl;
         break;
       }
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }      
+
+    visualizerThread.join();
     
     return F_reg;
   }
@@ -130,10 +142,11 @@ namespace reg{
   double computeError(Eigen::MatrixXd& error_set, Eigen::MatrixXd& point_set){
 
     int N = error_set.cols();
-    int iterations = (int)(N*0.1);
+    int iterations = (int)(N*0.05);
     Eigen::VectorXd squaredDiff = error_set.colwise().squaredNorm();
 
     // Find maximum error values and remove from the point set
+    /*  
     unsigned int maxIndex = 0; 
     unsigned int* maxIndex_ptr = &maxIndex;
     
@@ -142,8 +155,10 @@ namespace reg{
       reg::removeElement(squaredDiff, *maxIndex_ptr);
       reg::discardPoint(point_set, *maxIndex_ptr);
     }
-    
+   
     std::cout << "Current Number of scene points being used: " << point_set.cols() << std::endl;
+    */  
+    
     double mseError = squaredDiff.sum()/N;
     return mseError;
   }
@@ -270,5 +285,12 @@ namespace reg{
     Eigen::VectorXd ones_vec = Eigen::VectorXd::Ones(1,(int)points.cols());
     points_ << points.row(0), points.row(1), points.row(2), ones_vec;
     return points_; 
+  }
+
+  // TODO: Abstract away muplication of set of points by rigid transformation 
+  void multiply(const Eigen::Matrix4d& transformation, Eigen::MatrixXd& point_set){
+
+    point_set = transformation * point_set.colwise().homogeneous();
+    point_set = reg::makeNotHomogeneous(point_set);
   }
 }

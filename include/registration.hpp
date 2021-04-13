@@ -5,6 +5,10 @@
 #include <iostream>
 #include <typeinfo>
 #include <KDTree.hpp>
+#include <pointcloud_viewer.hpp>
+
+extern std::mutex sceneUpdateMutex;
+extern bool sceneUpdate;
 
 namespace reg{
   
@@ -30,7 +34,7 @@ namespace reg{
    * @return F_reg, best current estimate of aligning transformation 
    *
    */
-  Eigen::MatrixXd icp(kd_tree& tree, const Eigen::MatrixXd& scene_set);
+  Eigen::MatrixXd icp(kd_tree& tree, /*const*/ Eigen::MatrixXd& model_set, /*const*/ Eigen::MatrixXd& scene_set);
 
   /**
    * Compute MSE error across set of points, and then discard worst 10% of points
@@ -91,6 +95,10 @@ namespace reg{
    * @return points_ homogeneous coordinates
    */
   Eigen::MatrixXd makeHomogeneous(const Eigen::MatrixXd& points);
+
+
+  // TODO: Multiply point set by transformation 
+  void multiply(const Eigen::Matrix4d& transformation, Eigen::MatrixXd& point_set);
     
 }
 #endif /* REGISTRATION_HPP */
