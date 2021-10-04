@@ -1,9 +1,5 @@
 #include "registration.hpp"
 
-
-
-
-
 namespace reg{  
 
   /**
@@ -98,7 +94,7 @@ namespace reg{
     reg::multiply(F_reg, new_scene_set);
 
     // start visualizer thread 
-    std::thread visualizerThread(visualizeClouds, std::ref(model_set),std::ref(new_scene_set));
+    std::thread visualizerThread(visualizeClouds, std::ref(model_set), std::ref(new_scene_set));
     
     for(int i=0; i < max_iterations; ++i){
 
@@ -257,6 +253,9 @@ namespace reg{
       CP.col(i) = tree.get_best()->point;
       tree.reset_best();
     }
+    std::cout << "[####---------------------------------------- "
+    << "Closest points have been acquired" << " --------------------------------------####]" 
+    << std::endl;
     return CP;
   }
 

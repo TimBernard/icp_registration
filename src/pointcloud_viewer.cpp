@@ -65,11 +65,14 @@ void visualizeClouds(Eigen::MatrixXd& model_set, Eigen::MatrixXd& new_scene_set)
   // Run and update viewer while registration is being computed
   while (!viewer->wasStopped())
   {
+   // std::cout << "The viewer is running" << std::endl;
     viewer->spinOnce (100);
     
     //std::lock_guard<std::mutex> lg(sceneUpdateMutex);
     // If the scene has been updated, update the viewer to reflect that 
     if (sceneUpdate){
+
+      std::cout << "Scene has been updated!" << std::endl;
       pcl::PointCloud<pcl::PointXYZ>::Ptr update_ptr (new pcl::PointCloud<pcl::PointXYZ>);
       eigenToPcl(new_scene_set,update_ptr);
       viewer->updatePointCloud(update_ptr,"Scene Cloud");

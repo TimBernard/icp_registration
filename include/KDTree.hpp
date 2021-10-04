@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <limits>
 #include <boost/shared_ptr.hpp>
+#include <vector>
 #include <cmath>
 
 /** Node class to handle hold point data and children nodes */

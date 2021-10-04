@@ -29,7 +29,7 @@ int main(int argc, char** argv){
 
   /* Import First Cloud */
   std::ifstream file_one;
-  std::string path_one = "/home/timmy/icp_registration/practice_data/cloud_0.vtk";
+  std::string path_one = "/home/tim/icp_registration/practice_data/cloud_0.vtk";
   file_one.open(path_one.c_str());
   
   if(!file_one){
@@ -51,7 +51,7 @@ int main(int argc, char** argv){
 
   /* Import Second Cloud */
   std::ifstream file_two;
-  std::string path_two = "/home/timmy/icp_registration/practice_data/cloud_1.vtk";
+  std::string path_two = "/home/tim/icp_registration/practice_data/cloud_1.vtk";
   file_two.open(path_two.c_str());
 
   if(!file_two){

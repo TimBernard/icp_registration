@@ -92,7 +92,7 @@ void kd_tree::get_nn(const Eigen::Vector3d& query, Node* T, int depth){
     best = T;
     best_dist = dist;
   }
-  
+
   // Search the side of the tree/subtree according to if it's less than,
   // greater than or equal to current point along this depth's axis 
   if(query[axis] < T->point[axis]){
