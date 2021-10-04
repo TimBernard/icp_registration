@@ -25,7 +25,7 @@ Eigen::MatrixXd point_cloud_two;
 
 int main(int argc, char** argv){
 
-  std::cout << PCL_VERSION_PRETTY << std::endl;
+  //std::cout << PCL_VERSION_PRETTY << std::endl;
 
   /* Import First Cloud */
   std::ifstream file_one;
