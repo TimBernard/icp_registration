@@ -86,7 +86,7 @@ class kd_tree{
     };
     
   private:
-    Node* root;
+    Node* root = nullptr;
     Node* best = nullptr;
     double best_dist = std::numeric_limits<double>::max();
     int dim;
