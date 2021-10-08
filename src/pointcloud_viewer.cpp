@@ -16,7 +16,7 @@ void eigenToPcl(Eigen::MatrixXd& point_cloud, pcl::PointCloud<pcl::PointXYZ>::Pt
   cloud_ptr->width = cloud_ptr->size();
   cloud_ptr->height=1;
 
-  cout << "cloud_ptr->width" << cloud_ptr->width << endl;
+  //cout << "cloud_ptr->width" << cloud_ptr->width << endl;
 }
 
 //TODO: Create pcl visualization viewer and add two point clouds 
@@ -60,7 +60,7 @@ void visualizeClouds(Eigen::MatrixXd& model_set, Eigen::MatrixXd& new_scene_set)
   pcl::visualization::PCLVisualizer::Ptr viewer;
   viewer = twoCloudVis(model_cloud_ptr, scene_cloud_ptr);
 
-  cout << "Viewer has been created!" << endl;
+  //cout << "Viewer has been created!" << endl;
 
   // Run and update viewer while registration is being computed
   while (!viewer->wasStopped())

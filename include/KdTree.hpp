@@ -12,16 +12,17 @@
 /** Node class to handle hold point data and children nodes */
 struct Node{
   Node(const Eigen::Vector3d& pt, int lvl) : point(pt), depth(lvl) {} 
-  Node(const Eigen::Vector3d& pt, Node* l, Node* r) : point(pt), left(l), right(r) {}
+  /*
   ~Node(){ 
     delete left;
     left = NULL;
     delete right;
     right = NULL;
   } 
+  */
   Eigen::Vector3d point = Eigen::Vector3d::Zero();
-  Node* left = nullptr;
-  Node* right = nullptr;
+  std::shared_ptr<Node> left = nullptr;
+  std::shared_ptr<Node> right = nullptr;
   int depth = 0;
 };
 
@@ -31,11 +32,11 @@ struct Node{
  * distance (for nn lookup). Has methods for creating tree from vector of points
  * and for doing nn search. 
  */
-class kd_tree{
+class KdTree{
   public:
 
     // Default constructor
-    kd_tree();
+    KdTree() = default;
 
     /** 
      * Takes an Eigen Matrix of points and creates a tree (a KD Tree)
@@ -43,10 +44,10 @@ class kd_tree{
      *
      * @param points the set of points to make a tree of 
      */
-    kd_tree(const Eigen::MatrixXd& points);
+    KdTree(const Eigen::MatrixXd& points);
 
     // Destroys tree and frees memory
-    ~kd_tree();
+    //~KdTree();
 
     /**
      * Takes the beginning and end of a point set and recursively creates subtrees that
@@ -57,9 +58,9 @@ class kd_tree{
      * @param pts_end an iterator to the end of a vector of points
      * @param depth the current depth of the tree   
      */
-    Node* make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
-                    const std::vector<Eigen::Vector3d>::iterator& pts_end, 
-                    int depth);     
+    std::shared_ptr<Node> make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
+                                    const std::vector<Eigen::Vector3d>::iterator& pts_end, 
+                                    int depth);     
     /**
      * Takes a query point, and finds its nearest neighbor within the KD Tree
      * by updating the "best" node pointer member of the tree associated with 
@@ -69,28 +70,19 @@ class kd_tree{
      * @param T the root node of the KD Tree
      * @param depth the depth of the tree
      */
-    void get_nn(const Eigen::Vector3d& query, Node* T, int depth);  
+    void get_nn(const Eigen::Vector3d& query, std::shared_ptr<Node> T, int depth);  
 
     // Helper functions
-    Node* get_root() const{ return root; }
-    Node* get_best() const{ return best; }
+    std::shared_ptr<Node> get_root() const { return root;}
+    std::shared_ptr<Node> get_best() const { return best;}
     void reset_best(){ best = nullptr; best_dist = std::numeric_limits<double>::max();}
     
-    // Comparison for Eigen::Vector3d along specified axis
-    struct compare_vec {
-      compare_vec(int axis_): axis(axis_){}
-      bool operator()(const Eigen::Vector3d& pt1, const Eigen::Vector3d& pt2) {
-        return (pt1[axis] < pt2[axis]);
-      }
-      int axis;
-    };
-    
   private:
-    Node* root;
-    Node* best = nullptr;
+    std::shared_ptr<Node> root = nullptr;
+    std::shared_ptr<Node> best = nullptr;
     double best_dist = std::numeric_limits<double>::max();
-    int dim;
-    int Nm; 
+    int dim = 3;
+    int Nm = 0; 
 };
 
 #endif /* KDTREE_HPP */

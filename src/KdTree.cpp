@@ -1,12 +1,4 @@
-#include <KDTree.hpp>
-
-// Default constructor 
-kd_tree::kd_tree(){
-
-  root = nullptr;
-  dim = 0;
-  Nm = 0;
-}
+#include <KdTree.hpp>
 
 /** 
  * Takes an Eigen Matrix of points and creates a tree (a KD Tree)
@@ -14,7 +6,7 @@ kd_tree::kd_tree(){
  *
  * @param points the set of points to make a tree of 
  */
-kd_tree::kd_tree(const Eigen::MatrixXd& points){
+KdTree::KdTree(const Eigen::MatrixXd& points){
 
   std::cout << "Building tree..." << std::endl;
 
@@ -33,12 +25,14 @@ kd_tree::kd_tree(const Eigen::MatrixXd& points){
   std::cout << "Tree built" << std::endl;
 }
 
+/*
 // Destroy tree, free mem
-kd_tree::~kd_tree(){ 
+KdTree::~KdTree(){ 
 
   delete root;
   root = NULL;
 }
+*/
  
 /**
  * Takes the beginning and end of a point set and recursively creates subtrees that
@@ -50,9 +44,9 @@ kd_tree::~kd_tree(){
  * @param depth the current depth of the tree   
  * @return a pointer to the root of the tree
  */
-Node* kd_tree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
-                         const std::vector<Eigen::Vector3d>::iterator& pts_end,
-                         int depth){
+std::shared_ptr<Node> KdTree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
+                                        const std::vector<Eigen::Vector3d>::iterator& pts_end,
+                                        int depth){
 
   if(pts_begin == pts_end){ return nullptr;}
 
@@ -60,14 +54,17 @@ Node* kd_tree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin
 
   // Find the Median and use to split data 
   std::vector<Eigen::Vector3d>::iterator pts_mid = (pts_begin + (pts_end-pts_begin)/2);
-  std::nth_element(pts_begin, pts_mid, pts_end, kd_tree::compare_vec(axis));
+  auto compare_vec = [axis](const Eigen::Vector3d& pt1, const Eigen::Vector3d& pt2){
+    return (pt1[axis] < pt2[axis]);
+  };
+  std::nth_element(pts_begin, pts_mid, pts_end,compare_vec);
 
   // New node is now the root of next subtree, with left and right trees defined from 
   // 1st portion and 2nd portion of current point set
-  Node* node = new Node(*pts_mid,depth);
-  node->left = make_tree(pts_begin,pts_mid,depth+1);
-  node->right = make_tree(pts_mid+1,pts_end,depth+1);
-  return node;
+  std::shared_ptr<Node> node_ptr = std::make_shared<Node>(*pts_mid,depth);
+  node_ptr->left = make_tree(pts_begin,pts_mid,depth+1);
+  node_ptr->right = make_tree(pts_mid+1,pts_end,depth+1);
+  return node_ptr;
 } 
 
 
@@ -80,7 +77,7 @@ Node* kd_tree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin
  * @param T the root node of the KD Tree
  * @param depth the depth of the tree
  */
-void kd_tree::get_nn(const Eigen::Vector3d& query, Node* T, int depth){
+void KdTree::get_nn(const Eigen::Vector3d& query, std::shared_ptr<Node> T, int depth){
   
   if (T == nullptr){ return; } 
 

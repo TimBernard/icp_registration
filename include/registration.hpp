@@ -4,7 +4,7 @@
 #include <eigen3/Eigen/Dense>
 #include <iostream>
 #include <typeinfo>
-#include <KDTree.hpp>
+#include <KdTree.hpp>
 #include <pointcloud_viewer.hpp>
 
 extern std::mutex sceneUpdateMutex;
@@ -34,7 +34,7 @@ namespace reg{
    * @return F_reg, best current estimate of aligning transformation 
    *
    */
-  Eigen::MatrixXd icp(kd_tree& tree, /*const*/ Eigen::MatrixXd& model_set, /*const*/ Eigen::MatrixXd& scene_set);
+  Eigen::MatrixXd icp(KdTree& tree, /*const*/ Eigen::MatrixXd& model_set, /*const*/ Eigen::MatrixXd& scene_set);
 
   /**
    * Compute MSE error across set of points, and then discard worst 10% of points
@@ -78,7 +78,7 @@ namespace reg{
    * @param new_scene_set the set of points from the transformed scene
    * @return CP the set of closest points to the transformed scene cloud
    */
-  Eigen::MatrixXd findClosestPointsFaster(kd_tree& tree, const Eigen::MatrixXd& new_scene_set);   
+  Eigen::MatrixXd findClosestPointsFaster(KdTree& tree, const Eigen::MatrixXd& new_scene_set);   
 
   /**
    * Make set of homogenous points non-homogeneous 4xN -> 3xN
@@ -95,7 +95,6 @@ namespace reg{
    * @return points_ homogeneous coordinates
    */
   Eigen::MatrixXd makeHomogeneous(const Eigen::MatrixXd& points);
-
 
   // TODO: Multiply point set by transformation 
   void multiply(const Eigen::Matrix4d& transformation, Eigen::MatrixXd& point_set);

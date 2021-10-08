@@ -11,7 +11,7 @@
 #include <thread>
 using namespace std::chrono_literals;
 
-#include "include/KDTree.hpp"
+#include "include/KdTree.hpp"
 #include "include/data.hpp"
 #include "include/registration.hpp"
 #include "include/pointcloud_viewer.hpp"
@@ -73,7 +73,7 @@ int main(int argc, char** argv){
   }
 
   // Test out icp
-  kd_tree my_tree(point_cloud_two);
+  KdTree my_tree(point_cloud_two);
   Eigen::MatrixXd Final = reg::icp(my_tree, point_cloud_two, point_cloud_one);
   std::cout << "Final Transformation: \n" << Final << std::endl;
 

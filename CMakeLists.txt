@@ -23,7 +23,7 @@ add_definitions(${PCL_DEFINITIONS})
 # Specify compiler flags
 #set(CMAKE_CXX_STANDARD 14)
 #set(CMAKE_CXX_STANDARD_REQUIRED 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -O2 -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -O3 -std=c++17")
 
 # Get system information (possibly for different platforms)
 message("System: ${CMAKE_SYSTEM_NAME}, Complete System Name: ${CMAKE_SYSTEM} ")
@@ -42,13 +42,13 @@ set(LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib)
 include_directories(${CMAKE_SOURCE_DIR}/include ${EIGEN3_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 add_library(registration STATIC include/registration.hpp src/registration.cpp)
-add_library(KDTree STATIC include/KDTree.hpp src/KDTree.cpp)
+add_library(KdTree STATIC include/KdTree.hpp src/KdTree.cpp)
 add_library(data STATIC include/data.hpp src/data.cpp)
 add_library(pointcloud_viewer STATIC include/pointcloud_viewer.hpp src/pointcloud_viewer.cpp)
 
 # Executable
 add_executable(main main.cpp)
-target_link_libraries(main registration KDTree data pointcloud_viewer ${EIGEN3_LIBRARIES} ${PCL_LIBRARIES})
+target_link_libraries(main registration KdTree data pointcloud_viewer ${EIGEN3_LIBRARIES} ${PCL_LIBRARIES})
 
 add_custom_target(run 
 	COMMAND main
