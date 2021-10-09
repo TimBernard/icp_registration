@@ -1,8 +1,6 @@
 #include "registration.hpp"
 
 namespace reg{  
-  bool is_nan(const Eigen::VectorXd& x);
-  bool is_nan(const Eigen::MatrixXd& x);
 
   /**
    * Solve for rigid transformation between two 3D point sets using Singular Value Decomposition
@@ -13,14 +11,6 @@ namespace reg{
    */
   Eigen::MatrixXd rigidPointToPointSVD(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B){
 
-    if (is_nan(A)){
-      std::cout << "new_scene_set is NAN" << std::endl;
-    }
-    if (is_nan(B)){
-      std::cout << "closest points is NAN" << std::endl;
-    }
-
-    
     assert (A.cols() == B.cols());
     int n = A.cols();
     
@@ -32,6 +22,7 @@ namespace reg{
     
     // Find 3x3 Matrix, H
     Eigen::Matrix3d H;
+    H.setZero();
     int x = 0, y = 1, z = 2;
     for(int i = 0; i < n; ++i){
       Eigen::Matrix3d mat;
@@ -61,7 +52,6 @@ namespace reg{
     Eigen::Vector3d p = b_centroid -(R*a_centroid);
     Eigen::MatrixXd SE3(4,4);
     SE3 << R, p, 0, 0, 0, 1;
-    
     return SE3;  
   }
 
@@ -117,43 +107,14 @@ namespace reg{
       // Find the closest points to the newly transformed scene
       Eigen::MatrixXd CP = reg::findClosestPointsFaster(tree, new_scene_set);
 
-      if (is_nan(CP)){
-        std::cout << "CLOSEST POINTS are NAN" << std::endl;
-        std::cout << CP.col(0) << std::endl;
-      }
-
-
       // Compute Alignment 
       F_reg = reg::rigidPointToPointSVD(new_scene_set, CP);
       std::cout << "Current transform estimate: " << std::endl<< F_reg << std::endl;
 
       reg::multiply(F_reg, new_scene_set);
-        
-      /* Check CP and new_scene_set for nan values */ 
-      int num = CP.cols();
-      for (int i = 0; i < num; ++i){
-        Eigen::VectorXd my_vector = CP.col(i);
-        if (is_nan(my_vector)){
-          std::cout << "x: " << my_vector.x() << std::endl;
-          std::cout << "y: " << my_vector.y() << std::endl;
-          std::cout << "z: " << my_vector.z() << std::endl;
-          std::cout << "CP.col(" << i << "): " << CP(i) << std::endl;
-        }
-      }
-      num = new_scene_set.cols();
-      for (int i = 0; i < num; ++i){
-        Eigen::VectorXd my_vector = new_scene_set.col(i);
-        if (is_nan(my_vector)){
-          std::cout << "x: " << my_vector.x() << std::endl;
-          std::cout << "y: " << my_vector.y() << std::endl;
-          std::cout << "z: " << my_vector.z() << std::endl;
-          std::cout << "new_scene_set.col(" << i << "): " << new_scene_set(i) << std::endl;
-          break;
-        }
-      }
       Eigen::MatrixXd diff = CP - new_scene_set;
-      
       double error = reg::computeError(diff,new_scene_set); 
+
       std::cout << "Error (MSE): " <<  error << std::endl;
 
       if(error <= threshold){
@@ -168,22 +129,6 @@ namespace reg{
     return F_reg;
   }
 
-  bool is_nan(const Eigen::MatrixXd& x)
-  {
-      return ((x.array() == x.array())).all();
-  }
-
-  bool is_nan(const Eigen::VectorXd& x)
-  {
-      return (!((x.array() == x.array())).all());
-  }
-
-  //template <typename T> 
-  //bool is_nan(const T& x)
-  //{
-  //    return ((x.array() == x.array())).all();
-  //}
-
   /**
    * Compute MSE error across set of points, and then discard worst 10% of points
    *
@@ -193,59 +138,21 @@ namespace reg{
   double computeError(Eigen::MatrixXd& error_set, Eigen::MatrixXd& point_set){
 
     int N = error_set.cols();
-    //int iterations = (int)(N*0.05);
     Eigen::VectorXd squaredDiff = error_set.colwise().squaredNorm();
 
-    std::cout << "Error set Rows: " << error_set.rows() << std::endl;
-    std::cout << "Error set Cols: " << error_set.cols() << std::endl;
-
-    //if(is_nan(error_set)){
-    //  std::cout << "error_set IS NAN!!" << std::endl;
+    //// Find maximum error values and remove from the point set
+    //  
+    //int iterations = (int)(N*0.05);
+    //unsigned int maxIndex = 0; 
+    //unsigned int* maxIndex_ptr = &maxIndex;
+    //
+    //for(int i=0; i < iterations; ++i){
+    //  squaredDiff.maxCoeff(maxIndex_ptr);
+    //  reg::removeElement(squaredDiff, *maxIndex_ptr);
+    //  reg::discardPoint(point_set, *maxIndex_ptr);
     //}
-
-    for(int i=0; i < N; ++i){
-
-      //std::cout << "rows: " << error_set.row(i).rows() << std::endl;
-      //std::cout << "cols: " << error_set.col(i).cols() << std::endl;
-      Eigen::VectorXd my_vector = error_set.col(i);
-      if (is_nan(my_vector)){
-        std::cout << "x: " << my_vector.x() << std::endl;
-        std::cout << "y: " << my_vector.y() << std::endl;
-        std::cout << "z: " << my_vector.z() << std::endl;
-        std::cout << "error_set.col(" << i << "): " << error_set(i) << std::endl;
-        break;
-      }
-
-    }
-    std::cout << "It ran okay" << std::endl;
-
-    /* DEBUG squaredDiff 
-    std::cout << "Rows: " << squaredDiff.rows() << std::endl;
-    std::cout << "Cols: " << squaredDiff.cols() << std::endl;
-
-    for(int i =0; i < squaredDiff.rows(); ++i){
-      if (isnan(squaredDiff[i])){
-        std::cout << "squaredDiff[" << i <<"]: " << squaredDiff[i] << std::endl;
-      }
-    }
-    if(is_nan(squaredDiff)){
-      std::cout << "squaredDiff IS NAN!!" << std::endl;
-    }
-    */
-
-    // Find maximum error values and remove from the point set
-    /*  
-    unsigned int maxIndex = 0; 
-    unsigned int* maxIndex_ptr = &maxIndex;
-    
-    for(int i=0; i < iterations; ++i){
-      squaredDiff.maxCoeff(maxIndex_ptr);
-      reg::removeElement(squaredDiff, *maxIndex_ptr);
-      reg::discardPoint(point_set, *maxIndex_ptr);
-    }
    
-    std::cout << "Current Number of scene points being used: " << point_set.cols() << std::endl;
-    */  
+    //std::cout << "Current Number of scene points being used: " << point_set.cols() << std::endl;
     
     double mseError = squaredDiff.sum()/N;
     return mseError;
@@ -338,30 +245,13 @@ namespace reg{
     Eigen::MatrixXd CP(3,Ns);
     
     // Traverse through each scene point to find the closest in the model 
-    std::shared_ptr<Node> root = tree.get_root();
-    //Node* root = tree.get_root(); 
+    Node* root = tree.get_root();
     for(int i = 0; i < Ns; ++i){
     
       tree.get_nn(new_scene_set.col(i),root,0);
       CP.col(i) = tree.get_best()->point;
-      
-      Eigen::VectorXd my_vector = CP.col(i); 
-      if (is_nan(my_vector)){
-        std::cout << "The " << i << " closest point in findClosestPointsFaster is NAN" 
-          << std::endl;
-      }
-
       tree.reset_best();
     }
-    std::cout << "[####---------------------------------------- "
-    << "Closest points have been acquired" << " --------------------------------------####]" 
-    << std::endl;
-
-    if (is_nan(CP)){
-      std::cout << "THE CLOSEST POINTS IN findClosestPointsFaster is NAN" << std::endl;
-    }
-    std::cout << CP.transpose() << std::endl;
-
     return CP;
   }
 
@@ -399,3 +289,6 @@ namespace reg{
     point_set = reg::makeNotHomogeneous(point_set);
   }
 }
+
+
+

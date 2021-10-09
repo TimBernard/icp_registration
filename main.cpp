@@ -7,14 +7,16 @@
 #include <eigen3/Eigen/Dense>
 #include <cstring>
 #include <cerrno> 
-
 #include <thread>
-using namespace std::chrono_literals;
+#include <filesystem>
+#include <tuple> 
 
 #include "include/KdTree.hpp"
 #include "include/data.hpp"
 #include "include/registration.hpp"
 #include "include/pointcloud_viewer.hpp"
+
+using namespace std::chrono_literals;
 
 // Global variables 
 std::mutex sceneUpdateMutex;
@@ -22,54 +24,19 @@ bool sceneUpdate;
 Eigen::MatrixXd point_cloud_one;
 Eigen::MatrixXd point_cloud_two;
 
+// function to load cloud date from file name
+bool import_cloud(std::string file_name, Eigen::MatrixXd& point_cloud);
 
 int main(int argc, char** argv){
 
-  std::cout << PCL_VERSION_PRETTY << std::endl;
+  /* Import Clouds */
+  std::string file_one = "cloud_0.vtk";
+  std::string file_two = "cloud_1.vtk";
+  bool open_success_one = import_cloud(file_one, point_cloud_one);
+  bool open_success_two = import_cloud(file_two, point_cloud_two);
 
-  /* Import First Cloud */
-  std::ifstream file_one;
-  std::string path_one = "/home/tim/icp_registration/practice_data/cloud_0.vtk";
-  file_one.open(path_one.c_str());
-  
-  if(!file_one){
-    std::cerr << "First file didn't open: " << std::strerror(errno) << std::endl;
-    return EXIT_FAILURE;    
-  }else{
-    point_cloud_one = getMatrix(file_one);
-    
-    std::cout << "--------------------- " << std::endl;
-    std::cout << "First Cloud: " << std::endl;
-    std::cout << "Number of rows: " << point_cloud_one.rows() << std::endl;
-    std::cout << "Number of cols: " << point_cloud_one.cols() << std::endl;
-    std::cout << "--------------------- " << std::endl;
-    point_cloud_one.transposeInPlace();
-    std::cout << "New number of rows: " << point_cloud_one.rows() << std::endl;
-    std::cout << "New number of cols: " << point_cloud_one.cols() << std::endl;
-    //std::cout << std::endl << point_cloud_one << std::endl;
-  }
-
-  /* Import Second Cloud */
-  std::ifstream file_two;
-  std::string path_two = "/home/tim/icp_registration/practice_data/cloud_1.vtk";
-  file_two.open(path_two.c_str());
-
-  if(!file_two){
-    std::cerr << "Second file didn't open: " << std::strerror(errno) << std::endl;
+  if (!open_success_one || !open_success_two){
     return EXIT_FAILURE;
-  }else{
-    point_cloud_two = getMatrix(file_two);
-    
-    std::cout << "\n";
-    std::cout << "--------------------- " << std::endl;
-    std::cout << "Second Cloud: " << std::endl;
-    std::cout << "Number of rows: " << point_cloud_two.rows() << std::endl;
-    std::cout << "Number of cols: " << point_cloud_two.cols() << std::endl;
-    std::cout << "--------------------- " << std::endl;
-    point_cloud_two.transposeInPlace();
-    std::cout << "New number of rows: " << point_cloud_two.rows() << std::endl;
-    std::cout << "New number of cols: " << point_cloud_two.cols() << std::endl;
-    //std::cout << std::endl << point_cloud_two << std::endl; 
   }
 
   // Test out icp
@@ -78,4 +45,27 @@ int main(int argc, char** argv){
   std::cout << "Final Transformation: \n" << Final << std::endl;
 
   return EXIT_SUCCESS;
+}
+
+bool import_cloud(std::string file_name, Eigen::MatrixXd& point_cloud){
+  std::ifstream file; 
+  std::string path = std::string(std::filesystem::current_path()) +  "/../practice_data/" + file_name;
+  file.open(path.c_str());
+  bool open_success;
+
+  if(!file){
+    std::cerr << file_name + " didn't open: " << std::strerror(errno) << std::endl;
+    open_success = false; 
+  }else{
+    point_cloud = getMatrix(file);
+    
+    std::cout << "--------------------- " << std::endl;
+    std::cout << "Cloud from " << file_name << ": "  << std::endl;
+    point_cloud.transposeInPlace();
+    std::cout << "Number of rows: " << point_cloud.rows() << std::endl;
+    std::cout << "Number of cols: " << point_cloud.cols() << std::endl;
+    std::cout << "--------------------- " << std::endl << std::endl;
+    open_success = true; 
+  }
+  return open_success;
 }

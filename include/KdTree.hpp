@@ -5,24 +5,20 @@
 #include <iostream>
 #include <algorithm>
 #include <limits>
-#include <boost/shared_ptr.hpp>
 #include <vector>
 #include <cmath>
 
-/** Node class to handle hold point data and children nodes */
 struct Node{
   Node(const Eigen::Vector3d& pt, int lvl) : point(pt), depth(lvl) {} 
-  /*
   ~Node(){ 
     delete left;
     left = NULL;
     delete right;
     right = NULL;
   } 
-  */
   Eigen::Vector3d point = Eigen::Vector3d::Zero();
-  std::shared_ptr<Node> left = nullptr;
-  std::shared_ptr<Node> right = nullptr;
+  Node* left = nullptr; 
+  Node* right = nullptr; 
   int depth = 0;
 };
 
@@ -46,8 +42,8 @@ class KdTree{
      */
     KdTree(const Eigen::MatrixXd& points);
 
-    // Destroys tree and frees memory
-    //~KdTree();
+    // Destroy tree, free mem
+    ~KdTree();
 
     /**
      * Takes the beginning and end of a point set and recursively creates subtrees that
@@ -58,7 +54,7 @@ class KdTree{
      * @param pts_end an iterator to the end of a vector of points
      * @param depth the current depth of the tree   
      */
-    std::shared_ptr<Node> make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
+    Node* make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
                                     const std::vector<Eigen::Vector3d>::iterator& pts_end, 
                                     int depth);     
     /**
@@ -70,16 +66,16 @@ class KdTree{
      * @param T the root node of the KD Tree
      * @param depth the depth of the tree
      */
-    void get_nn(const Eigen::Vector3d& query, std::shared_ptr<Node> T, int depth);  
+    void get_nn(const Eigen::Vector3d& query, Node* T, int depth);  
 
     // Helper functions
-    std::shared_ptr<Node> get_root() const { return root;}
-    std::shared_ptr<Node> get_best() const { return best;}
+    Node* get_root() const { return root;}
+    Node* get_best() const { return best;}
     void reset_best(){ best = nullptr; best_dist = std::numeric_limits<double>::max();}
     
   private:
-    std::shared_ptr<Node> root = nullptr;
-    std::shared_ptr<Node> best = nullptr;
+    Node* root = nullptr;
+    Node* best = nullptr;
     double best_dist = std::numeric_limits<double>::max();
     int dim = 3;
     int Nm = 0; 

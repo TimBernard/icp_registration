@@ -16,7 +16,7 @@ KdTree::KdTree(const Eigen::MatrixXd& points){
   std::vector<Eigen::Vector3d> points_vec;
   points_vec.resize(points.cols());
   int count = 0;
-  std::vector<Eigen::Vector3d>::iterator it = points_vec.begin();
+  auto it = points_vec.begin();
   for(; it != points_vec.end(); ++it){
     *it = points.col(count);
     count++;
@@ -25,45 +25,45 @@ KdTree::KdTree(const Eigen::MatrixXd& points){
   std::cout << "Tree built" << std::endl;
 }
 
-/*
+
 // Destroy tree, free mem
 KdTree::~KdTree(){ 
 
   delete root;
   root = NULL;
 }
-*/
+
  
 /**
  * Takes the beginning and end of a point set and recursively creates subtrees that
  * split the current dimension in half (according to the midpoint of the data along 
  * that axis)
  *
- * @param pts_begin an iterator of the beginning of a vector of points
- * @param pts_end an iterator to the end of a vector of points
+ * @param begin_point an iterator of the beginning of a vector of points
+ * @param end_point an iterator to the end of a vector of points
  * @param depth the current depth of the tree   
  * @return a pointer to the root of the tree
  */
-std::shared_ptr<Node> KdTree::make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
-                                        const std::vector<Eigen::Vector3d>::iterator& pts_end,
-                                        int depth){
+Node* KdTree::make_tree(const std::vector<Eigen::Vector3d>::iterator& begin_point,
+                        const std::vector<Eigen::Vector3d>::iterator& end_point,
+                        int depth){
 
-  if(pts_begin == pts_end){ return nullptr;}
+  if(begin_point == end_point){ return nullptr;}
 
   int axis = depth % dim;
 
   // Find the Median and use to split data 
-  std::vector<Eigen::Vector3d>::iterator pts_mid = (pts_begin + (pts_end-pts_begin)/2);
+  auto mid_point = (begin_point + (end_point-begin_point)/2);
   auto compare_vec = [axis](const Eigen::Vector3d& pt1, const Eigen::Vector3d& pt2){
     return (pt1[axis] < pt2[axis]);
   };
-  std::nth_element(pts_begin, pts_mid, pts_end,compare_vec);
+  std::nth_element(begin_point, mid_point, end_point,compare_vec);
 
   // New node is now the root of next subtree, with left and right trees defined from 
   // 1st portion and 2nd portion of current point set
-  std::shared_ptr<Node> node_ptr = std::make_shared<Node>(*pts_mid,depth);
-  node_ptr->left = make_tree(pts_begin,pts_mid,depth+1);
-  node_ptr->right = make_tree(pts_mid+1,pts_end,depth+1);
+  Node* node_ptr = new Node(*mid_point,depth); 
+  node_ptr->left = make_tree(begin_point,mid_point,depth+1);
+  node_ptr->right = make_tree(mid_point+1,end_point,depth+1);
   return node_ptr;
 } 
 
@@ -77,10 +77,9 @@ std::shared_ptr<Node> KdTree::make_tree(const std::vector<Eigen::Vector3d>::iter
  * @param T the root node of the KD Tree
  * @param depth the depth of the tree
  */
-void KdTree::get_nn(const Eigen::Vector3d& query, std::shared_ptr<Node> T, int depth){
+void KdTree::get_nn(const Eigen::Vector3d& query, Node* T, int depth){
   
   if (T == nullptr){ return; } 
-
   int axis = depth % dim;
 
   // Update best estimate, if the current node is closer 
