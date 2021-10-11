@@ -30,7 +30,7 @@ KdTree::KdTree(const Eigen::MatrixXd& points){
 KdTree::~KdTree(){ 
 
   delete root;
-  root = NULL;
+  root = nullptr;
 }
 
  

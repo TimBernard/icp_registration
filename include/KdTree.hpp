@@ -12,9 +12,9 @@ struct Node{
   Node(const Eigen::Vector3d& pt, int lvl) : point(pt), depth(lvl) {} 
   ~Node(){ 
     delete left;
-    left = NULL;
+    left = nullptr;
     delete right;
-    right = NULL;
+    right = nullptr;
   } 
   Eigen::Vector3d point = Eigen::Vector3d::Zero();
   Node* left = nullptr; 
