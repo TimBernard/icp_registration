@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16.0)
-project(icp_registration VERSION 0.2)
+project(icp_registration VERSION 0.3)
 
 # Make sure no in source builds
 if(" ${CMAKE_SOURCE_DIR}" STREQUAL " ${CMAKE_BINARY_DIR}")
@@ -21,9 +21,7 @@ add_definitions(${EIGEN3_DEFINITIONS})
 add_definitions(${PCL_DEFINITIONS})
 
 # Specify compiler flags
-#set(CMAKE_CXX_STANDARD 14)
-#set(CMAKE_CXX_STANDARD_REQUIRED 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -O3 -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -O2 -std=c++17")
 
 # Get system information (possibly for different platforms)
 message("System: ${CMAKE_SYSTEM_NAME}, Complete System Name: ${CMAKE_SYSTEM} ")

@@ -24,7 +24,7 @@ bool sceneUpdate;
 Eigen::MatrixXd point_cloud_one;
 Eigen::MatrixXd point_cloud_two;
 
-// function to load cloud date from file name
+// function to load cloud data from file name
 bool import_cloud(std::string file_name, Eigen::MatrixXd& point_cloud);
 
 int main(int argc, char** argv){
