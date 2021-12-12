@@ -2,6 +2,8 @@
 
 namespace reg{  
 
+  enum Axis{ X, Y, Z}; 
+
   /**
    * Solve for rigid transformation between two 3D point sets using Singular Value Decomposition
    *
@@ -9,10 +11,10 @@ namespace reg{
    * @param B set of 3D points 
    * @return SE3 the transformation that best aligns these two point clouds 
    */
-  Eigen::MatrixXd rigidPointToPointSVD(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B){
+  Eigen::MatrixXd rigid_point2point_SVD(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B){
 
     assert (A.cols() == B.cols());
-    int n = A.cols();
+    const int n = A.cols();
     
     // Center point sets
     Eigen::Vector3d a_centroid = A.rowwise().mean();
@@ -21,14 +23,12 @@ namespace reg{
     Eigen::MatrixXd B_prime = B.colwise() - b_centroid;  
     
     // Find 3x3 Matrix, H
-    Eigen::Matrix3d H;
-    H.setZero();
-    int x = 0, y = 1, z = 2;
+    Eigen::Matrix3d H = Eigen::Matrix3d::Zero();
     for(int i = 0; i < n; ++i){
       Eigen::Matrix3d mat;
-      mat << A_prime(x,i)*B_prime(x,i), A_prime(x,i)*B_prime(y,i), A_prime(x,i)*B_prime(z,i),
-             A_prime(y,i)*B_prime(x,i), A_prime(y,i)*B_prime(y,i), A_prime(y,i)*B_prime(z,i),
-             A_prime(z,i)*B_prime(x,i), A_prime(z,i)*B_prime(y,i), A_prime(z,i)*B_prime(z,i);
+      mat << A_prime(X,i)*B_prime(X,i), A_prime(X,i)*B_prime(Y,i), A_prime(X,i)*B_prime(Z,i),
+             A_prime(Y,i)*B_prime(X,i), A_prime(Y,i)*B_prime(Y,i), A_prime(Y,i)*B_prime(Z,i),
+             A_prime(Z,i)*B_prime(X,i), A_prime(Z,i)*B_prime(Y,i), A_prime(Z,i)*B_prime(Z,i);
       H += mat;    
     }
     
@@ -42,14 +42,14 @@ namespace reg{
       std::cout << "Condition reached" << std::endl;
       V.col(2)*=-1;
       R  = U * V.transpose();
-      
+
       if(R.determinant() < 0){
         std::cout << "Algorithm failed" << std::endl;
       }
     }
     
     // Full Transformation with translation
-    Eigen::Vector3d p = b_centroid -(R*a_centroid);
+    Eigen::Vector3d p = b_centroid - (R*a_centroid);
     Eigen::MatrixXd SE3(4,4);
     SE3 << R, p, 0, 0, 0, 1;
     return SE3;  
@@ -86,8 +86,8 @@ namespace reg{
     std::cout << "Initial guess: " << std::endl << F_reg << std::endl;
 
     // Useful Constants
-    int max_iterations = 50;
-    double threshold = 0.1; 
+    const int max_iterations = 50;
+    const double threshold = 0.1; 
       
     // Apply intial transformation to the scene points
     Eigen::MatrixXd new_scene_set = scene_set;
@@ -105,15 +105,15 @@ namespace reg{
       std::cout << "Iteration " << (i+1) << " " << std::endl; 
 
       // Find the closest points to the newly transformed scene
-      Eigen::MatrixXd CP = reg::findClosestPointsFaster(tree, new_scene_set);
+      Eigen::MatrixXd CP = reg::find_closest_points_faster(tree, new_scene_set);
 
       // Compute Alignment 
-      F_reg = reg::rigidPointToPointSVD(new_scene_set, CP);
+      F_reg = reg::rigid_point2point_SVD(new_scene_set, CP);
       std::cout << "Current transform estimate: " << std::endl<< F_reg << std::endl;
 
       reg::multiply(F_reg, new_scene_set);
       Eigen::MatrixXd diff = CP - new_scene_set;
-      double error = reg::computeError(diff,new_scene_set); 
+      double error = reg::compute_error(diff,new_scene_set); 
 
       std::cout << "Error (MSE): " <<  error << std::endl;
 
@@ -135,9 +135,9 @@ namespace reg{
    * @param error_set, the difference between scene and closest model points 
    * @param point_set, the scene points
    */
-  double computeError(Eigen::MatrixXd& error_set, Eigen::MatrixXd& point_set){
+  double compute_error(Eigen::MatrixXd& error_set, Eigen::MatrixXd& point_set){
 
-    int N = error_set.cols();
+    const int N = error_set.cols();
     Eigen::VectorXd squaredDiff = error_set.colwise().squaredNorm();
 
     //// Find maximum error values and remove from the point set
@@ -148,8 +148,8 @@ namespace reg{
     //
     //for(int i=0; i < iterations; ++i){
     //  squaredDiff.maxCoeff(maxIndex_ptr);
-    //  reg::removeElement(squaredDiff, *maxIndex_ptr);
-    //  reg::discardPoint(point_set, *maxIndex_ptr);
+    //  reg::remove_element(squaredDiff, *maxIndex_ptr);
+    //  reg::discard_point(point_set, *maxIndex_ptr);
     //}
    
     //std::cout << "Current Number of scene points being used: " << point_set.cols() << std::endl;
@@ -164,7 +164,7 @@ namespace reg{
    * @param mat, matrix from Eigen lib
    * @param index, column location to do removal 
    */
-  void discardPoint(Eigen::MatrixXd& mat, unsigned int index){
+  void discard_point(Eigen::MatrixXd& mat, unsigned int index){
 
     unsigned int colToRemove = index;
     unsigned int numCols = mat.cols() -1;
@@ -180,7 +180,7 @@ namespace reg{
    * @param vec, vector from Eigen lib
    * @param index, location to do removal 
    */
-  void removeElement(Eigen::VectorXd& vec, unsigned int index){
+  void remove_element(Eigen::VectorXd& vec, unsigned int index){
 
     unsigned int numRows = vec.rows()-1;
     if (index < numRows){
@@ -198,16 +198,15 @@ namespace reg{
    * @param new_scene_set the set of points from the transformed scene
    * @return CP the set of closest points to the transformed scene cloud
    */
-  Eigen::MatrixXd findClosestPoints(const Eigen::MatrixXd& model_set, const Eigen::MatrixXd& new_scene_set){
+  Eigen::MatrixXd find_closest_points(const Eigen::MatrixXd& model_set, const Eigen::MatrixXd& new_scene_set){
 
-    int Nm = model_set.cols();
-    int Ns = new_scene_set.cols();
+    const int Nm = model_set.cols();
+    const int Ns = new_scene_set.cols();
 
     //Eigen::MatrixXd CP(3,(int)new_scene_set.cols());
     Eigen::MatrixXd CP(3,Ns);
     Eigen::Vector3d scene_point; 
-    std::vector<double> distances;
-    distances.resize(Nm);
+    std::vector<double> distances(Nm);
     for(int i = 0; i < Ns; ++i){
 
       std::cout << "Point Number: " << i << std::endl;
@@ -221,7 +220,7 @@ namespace reg{
 
       // Sort distances and take the closest one 
       std::vector<double> distances_org = distances;
-      std::sort(distances.begin(),distances.end(), [] (double a, double b){return (a<b);});
+      std::sort(distances.begin(),distances.end(), [] (double a, double b){return a < b;});
       
       std::vector<double>::iterator it;
       it = std::find(distances_org.begin(),distances_org.end(),distances[0]);
@@ -239,9 +238,9 @@ namespace reg{
    * @param new_scene_set the set of points from the transformed scene
    * @return CP the set of closest points to the transformed scene cloud
    */
-  Eigen::MatrixXd findClosestPointsFaster(KdTree& tree, const Eigen::MatrixXd& new_scene_set){
+  Eigen::MatrixXd find_closest_points_faster(KdTree& tree, const Eigen::MatrixXd& new_scene_set){
     
-    int Ns = new_scene_set.cols();
+    const int Ns = new_scene_set.cols();
     Eigen::MatrixXd CP(3,Ns);
     
     // Traverse through each scene point to find the closest in the model 
@@ -256,29 +255,29 @@ namespace reg{
   }
 
   /**
-   * Make set of homogenous points non-homogeneous 4xN -> 3xN
+   * Make set of homogeneous points non-homogeneous 4xN -> 3xN
    * 
    * @param points homogeneous coordinates
    * @return points_ non-homogeneous coordinates
    */
-  Eigen::MatrixXd makeNotHomogeneous(const Eigen::MatrixXd& points){
+  Eigen::MatrixXd make_not_homogeneous(const Eigen::MatrixXd& points){
 
     Eigen::MatrixXd points_((int)points.rows()-1,(int)points.cols());
-    points_ << points.row(0), points.row(1), points.row(2); 
+    points_ << points.row(X), points.row(Y), points.row(Z); 
     return points_; 
   }
 
   /**
-   * Make set of non-homogenous points homogeneous 3xN -> 4xN,
+   * Make set of non-homogeneous points homogeneous 3xN -> 4xN,
    * 
    * @param points non-homogeneous coordinates
    * @return points_ homogeneous coordinates
    */
-  Eigen::MatrixXd makeHomogeneous(const Eigen::MatrixXd& points){
+  Eigen::MatrixXd make_homogeneous(const Eigen::MatrixXd& points){
 
     Eigen::MatrixXd points_((int)(points.rows()+1),(int)(points.cols()));
     Eigen::VectorXd ones_vec = Eigen::VectorXd::Ones(1,(int)points.cols());
-    points_ << points.row(0), points.row(1), points.row(2), ones_vec;
+    points_ << points.row(X), points.row(Y), points.row(Z), ones_vec;
     return points_; 
   }
 
@@ -286,9 +285,6 @@ namespace reg{
   void multiply(const Eigen::Matrix4d& transformation, Eigen::MatrixXd& point_set){
 
     point_set = transformation * point_set.colwise().homogeneous();
-    point_set = reg::makeNotHomogeneous(point_set);
+    point_set = reg::make_not_homogeneous(point_set);
   }
 }
-
-
-

@@ -25,9 +25,9 @@ Eigen::MatrixXd point_cloud_one;
 Eigen::MatrixXd point_cloud_two;
 
 // function to load cloud data from file name
-bool import_cloud(std::string file_name, Eigen::MatrixXd& point_cloud);
+bool import_cloud(const std::string& file_name, Eigen::MatrixXd& point_cloud);
 
-int main(int argc, char** argv){
+int main(){
 
   /* Import Clouds */
   std::string file_one = "cloud_0.vtk";
@@ -47,7 +47,7 @@ int main(int argc, char** argv){
   return EXIT_SUCCESS;
 }
 
-bool import_cloud(std::string file_name, Eigen::MatrixXd& point_cloud){
+bool import_cloud(const std::string& file_name, Eigen::MatrixXd& point_cloud){
   std::ifstream file; 
   std::string path = std::string(std::filesystem::current_path()) +  "/../practice_data/" + file_name;
   file.open(path.c_str());
@@ -57,7 +57,7 @@ bool import_cloud(std::string file_name, Eigen::MatrixXd& point_cloud){
     std::cerr << file_name + " didn't open: " << std::strerror(errno) << std::endl;
     open_success = false; 
   }else{
-    point_cloud = getMatrix(file);
+    point_cloud = get_matrix(file);
     
     std::cout << "--------------------- " << std::endl;
     std::cout << "Cloud from " << file_name << ": "  << std::endl;

@@ -11,21 +11,7 @@
 #include <cstring>
 #include <cerrno>
 
-/**
- * Takes an open file to get the total number of points.
- * Currently works with vtk data format
- *
- * @param file the opened file containing the points
- * @return num_points the number of points 
- */
-int getNumPoints(std::ifstream& file);
-
-/**
- * Takes an open file and imports points into an Nx3 matrix
- *
- * @param file the opened file containing the points
- * @return point_set the point set in a matrix
- */
-Eigen::MatrixX3d getMatrix(std::ifstream& file);
+int get_num_points(std::ifstream& file);
+Eigen::MatrixX3d get_matrix(std::ifstream& file);
 
 #endif /* DATA_HPP */

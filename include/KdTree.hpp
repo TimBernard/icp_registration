@@ -12,8 +12,8 @@ struct Node{
   Node(const Eigen::Vector3d& pt, int lvl) : point(pt), depth(lvl) {} 
   ~Node(){ 
     delete left;
-    left = nullptr;
     delete right;
+    left = nullptr;
     right = nullptr;
   } 
   Eigen::Vector3d point = Eigen::Vector3d::Zero();
@@ -31,41 +31,18 @@ struct Node{
 class KdTree{
   public:
 
-    // Default constructor
+    // Constructors
     KdTree() = default;
-
-    /** 
-     * Takes an Eigen Matrix of points and creates a tree (a KD Tree)
-     * with the tree's toplevel node stored as the root member variable
-     *
-     * @param points the set of points to make a tree of 
-     */
     KdTree(const Eigen::MatrixXd& points);
 
     // Destroy tree, free mem
     ~KdTree();
 
-    /**
-     * Takes the beginning and end of a point set and recursively creates subtrees that
-     * split the current dimension in half (according to the midpoint of the data along 
-     * that axis)
-     *
-     * @param pts_begin an iterator of the beginning of a vector of points
-     * @param pts_end an iterator to the end of a vector of points
-     * @param depth the current depth of the tree   
-     */
+    // Make tree from points 
     Node* make_tree(const std::vector<Eigen::Vector3d>::iterator& pts_begin,
                                     const std::vector<Eigen::Vector3d>::iterator& pts_end, 
                                     int depth);     
-    /**
-     * Takes a query point, and finds its nearest neighbor within the KD Tree
-     * by updating the "best" node pointer member of the tree associated with 
-     * the input root, T
-     *
-     * @param query the point we are querying 
-     * @param T the root node of the KD Tree
-     * @param depth the depth of the tree
-     */
+    // Get nearest neighbor 
     void get_nn(const Eigen::Vector3d& query, Node* T, int depth);  
 
     // Helper functions
@@ -80,5 +57,4 @@ class KdTree{
     int dim = 3;
     int Nm = 0; 
 };
-
 #endif /* KDTREE_HPP */

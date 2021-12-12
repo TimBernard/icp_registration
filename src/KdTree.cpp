@@ -9,16 +9,13 @@
 KdTree::KdTree(const Eigen::MatrixXd& points){
 
   std::cout << "Building tree..." << std::endl;
-
   dim = points.rows();
   Nm = points.cols();
 
-  std::vector<Eigen::Vector3d> points_vec;
-  points_vec.resize(points.cols());
+  std::vector<Eigen::Vector3d> points_vec(points.cols());
   int count = 0;
-  auto it = points_vec.begin();
-  for(; it != points_vec.end(); ++it){
-    *it = points.col(count);
+  for(auto& vec : points_vec){
+    vec = points.col(count);
     count++;
   }
   root = make_tree(points_vec.begin(),points_vec.end(),0);
@@ -79,8 +76,8 @@ Node* KdTree::make_tree(const std::vector<Eigen::Vector3d>::iterator& begin_poin
  */
 void KdTree::get_nn(const Eigen::Vector3d& query, Node* T, int depth){
   
-  if (T == nullptr){ return; } 
-  int axis = depth % dim;
+  if (T == nullptr){ return;} 
+  const int axis = depth % dim;
 
   // Update best estimate, if the current node is closer 
   double dist = (query - T->point).norm();
