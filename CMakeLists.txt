@@ -32,11 +32,13 @@ add_subdirectory(libs)
 # Executable
 add_executable(main src/main.cpp)
 target_link_libraries(main 
-    PRIVATE registration data_import 
+  PRIVATE 
+    registration 
+    data_import 
 )
 
 add_custom_target(run 
-	COMMAND main
-	DEPENDS main
-	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMAND main
+  DEPENDS main
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
