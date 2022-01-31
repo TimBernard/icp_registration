@@ -1,4 +1,4 @@
-#include <KdTree.hpp>
+#include <kd_tree.hpp>
 
 /** 
  * Takes an Eigen Matrix of points and creates a tree (a KD Tree)

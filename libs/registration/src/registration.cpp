@@ -65,7 +65,9 @@ namespace reg{
    * @return F_reg, best current estimate of aligning transformation 
    *
    */
-  Eigen::MatrixXd icp(KdTree& tree, /*const*/ Eigen::MatrixXd& model_set, /*const*/ Eigen::MatrixXd& scene_set){
+  Eigen::MatrixXd icp(/*const*/ Eigen::MatrixXd& model_set, /*const*/ Eigen::MatrixXd& scene_set){
+
+    KdTree tree(model_set); 
 
     // Initial Pose 
     Eigen::MatrixXd F_reg = Eigen::MatrixXd::Identity(4,4);

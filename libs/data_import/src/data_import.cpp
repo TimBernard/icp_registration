@@ -1,4 +1,4 @@
-#include "data.hpp"
+#include "data_import.hpp"
 
 /**
  * Takes an open file to get the total number of points.

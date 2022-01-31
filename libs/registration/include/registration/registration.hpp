@@ -4,7 +4,7 @@
 #include <eigen3/Eigen/Dense>
 #include <iostream>
 #include <typeinfo>
-#include <KdTree.hpp>
+#include <kd_tree.hpp>
 #include <pointcloud_viewer.hpp>
 
 extern std::mutex sceneUpdateMutex;
@@ -16,7 +16,7 @@ namespace reg{
   Eigen::MatrixXd rigid_point2point_SVD(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B);
 
   // iteratively align scene set to model set 
-  Eigen::MatrixXd icp(KdTree& tree, /*const*/ Eigen::MatrixXd& model_set, /*const*/ Eigen::MatrixXd& scene_set);
+  Eigen::MatrixXd icp(/*const*/ Eigen::MatrixXd& model_set, /*const*/ Eigen::MatrixXd& scene_set);
 
   double compute_error(Eigen::MatrixXd& error_set, Eigen::MatrixXd& point_set);
 

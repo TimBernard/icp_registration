@@ -1,4 +1,4 @@
-#include <pointcloud_viewer.hpp>
+#include "pointcloud_viewer.hpp"
 
 //TODO: Convert Eigen matrix (of points) to pcl point cloud (pointers)
 void eigenToPcl(Eigen::MatrixXd& point_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr){
