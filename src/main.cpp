@@ -1,15 +1,7 @@
 #include <iostream>
-#include <memory>
 #include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
 #include <eigen3/Eigen/Dense>
-#include <cstring>
-#include <cerrno> 
 #include <thread>
-#include <filesystem>
-#include <tuple> 
 
 #include "registration.hpp"
 #include "data_import.hpp"
@@ -18,20 +10,17 @@ using namespace std::chrono_literals;
 
 // Global variables 
 std::mutex sceneUpdateMutex;
-bool sceneUpdate;
+bool sceneUpdate = false;
 Eigen::MatrixXd point_cloud_one;
 Eigen::MatrixXd point_cloud_two;
-
-// function to load cloud data from file name
-bool import_cloud(const std::string& file_name, Eigen::MatrixXd& point_cloud);
 
 int main(){
 
   /* Import Clouds */
   std::string file_one = "cloud_0.vtk";
   std::string file_two = "cloud_1.vtk";
-  bool open_success_one = import_cloud(file_one, point_cloud_one);
-  bool open_success_two = import_cloud(file_two, point_cloud_two);
+  bool open_success_one = data::import_cloud(file_one, point_cloud_one);
+  bool open_success_two = data::import_cloud(file_two, point_cloud_two);
 
   if (!open_success_one || !open_success_two){
     return EXIT_FAILURE;
@@ -44,25 +33,3 @@ int main(){
   return EXIT_SUCCESS;
 }
 
-bool import_cloud(const std::string& file_name, Eigen::MatrixXd& point_cloud){
-  std::ifstream file; 
-  std::string path = std::string(std::filesystem::current_path()) +  "/../practice_data/" + file_name;
-  file.open(path.c_str());
-  bool open_success;
-
-  if(!file){
-    std::cerr << file_name + " didn't open: " << std::strerror(errno) << std::endl;
-    open_success = false; 
-  }else{
-    point_cloud = get_matrix(file);
-    
-    std::cout << "--------------------- " << std::endl;
-    std::cout << "Cloud from " << file_name << ": "  << std::endl;
-    point_cloud.transposeInPlace();
-    std::cout << "Number of rows: " << point_cloud.rows() << std::endl;
-    std::cout << "Number of cols: " << point_cloud.cols() << std::endl;
-    std::cout << "--------------------- " << std::endl << std::endl;
-    open_success = true; 
-  }
-  return open_success;
-}
