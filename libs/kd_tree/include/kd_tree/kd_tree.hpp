@@ -1,12 +1,10 @@
-#ifndef KDTREE_HPP
-#define KDTREE_HPP
+#ifndef KD_TREE_HPP
+#define KD_TREE_HPP
 
 #include <eigen3/Eigen/Core>
-#include <iostream>
 #include <algorithm>
 #include <limits>
 #include <vector>
-#include <cmath>
 
 struct Node{
   Node(const Eigen::Vector3d& pt, int lvl) : point(pt), depth(lvl) {} 
@@ -57,4 +55,4 @@ class KdTree{
     int dim = 3;
     int Nm = 0; 
 };
-#endif /* KDTREE_HPP */
+#endif /* KD_TREE_HPP */

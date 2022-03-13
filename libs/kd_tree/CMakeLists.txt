@@ -11,7 +11,7 @@ target_include_directories(kd_tree
     src
 )
 
-target_link_libraries(data_import 
+target_link_libraries(kd_tree 
   PUBLIC 
     Eigen3::Eigen
 )

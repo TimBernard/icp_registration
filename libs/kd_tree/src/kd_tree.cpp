@@ -1,3 +1,9 @@
+#include <eigen3/Eigen/Core>
+#include <algorithm>
+#include <limits>
+#include <vector>
+#include <iostream>
+
 #include <kd_tree.hpp>
 
 /** 
