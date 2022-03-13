@@ -9,13 +9,11 @@ target_include_directories(pointcloud_viewer
     include/pointcloud_viewer
   PRIVATE 
     src 
-    ${PCL_INCLUDE_DIRS} 
-    ${PCL_LIBRARY_DIRS}
 )
 
 target_link_libraries(pointcloud_viewer
   PUBLIC 
-    Eigen3::Eigen 
     ${PCL_LIBRARIES} 
+    Eigen3::Eigen 
     Threads::Threads
 )

@@ -1,4 +1,16 @@
-#include "pointcloud_viewer.hpp"
+
+#include <pcl/pcl_config.h>
+#include <pcl/common/common_headers.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/console/parse.h>
+#include <eigen3/Eigen/Dense>
+
+#include <pointcloud_viewer.hpp>
+
+using std::cout; 
+using std::endl; 
 
 //TODO: Convert Eigen matrix (of points) to pcl point cloud (pointers)
 void eigenToPcl(Eigen::MatrixXd& point_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr){
@@ -16,7 +28,6 @@ void eigenToPcl(Eigen::MatrixXd& point_cloud, pcl::PointCloud<pcl::PointXYZ>::Pt
   cloud_ptr->width = cloud_ptr->size();
   cloud_ptr->height=1;
 
-  //cout << "cloud_ptr->width" << cloud_ptr->width << endl;
 }
 
 //TODO: Create pcl visualization viewer and add two point clouds 
@@ -68,11 +79,9 @@ void visualizeClouds(Eigen::MatrixXd& model_set, Eigen::MatrixXd& new_scene_set)
    // std::cout << "The viewer is running" << std::endl;
     viewer->spinOnce (100);
     
-    //std::lock_guard<std::mutex> lg(sceneUpdateMutex);
+    cout << "#--------------------------------- sceneUpdate: " << (bool)sceneUpdate << endl;
     // If the scene has been updated, update the viewer to reflect that 
     if (sceneUpdate){
-
-      std::cout << "Scene has been updated!" << std::endl;
       pcl::PointCloud<pcl::PointXYZ>::Ptr update_ptr (new pcl::PointCloud<pcl::PointXYZ>);
       eigenToPcl(new_scene_set,update_ptr);
       viewer->updatePointCloud(update_ptr,"Scene Cloud");
