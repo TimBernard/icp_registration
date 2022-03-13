@@ -3,7 +3,6 @@
 
 #include <eigen3/Eigen/Dense>
 #include <iostream>
-#include <typeinfo>
 #include <kd_tree.hpp>
 #include <pointcloud_viewer.hpp>
 
@@ -16,7 +15,7 @@ namespace reg{
   Eigen::MatrixXd rigid_point2point_SVD(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B);
 
   // iteratively align scene set to model set 
-  Eigen::MatrixXd icp(/*const*/ Eigen::MatrixXd& model_set, /*const*/ Eigen::MatrixXd& scene_set);
+  Eigen::MatrixXd icp(Eigen::MatrixXd& model_set, Eigen::MatrixXd& scene_set);
 
   double compute_error(Eigen::MatrixXd& error_set, Eigen::MatrixXd& point_set);
 
@@ -27,6 +26,7 @@ namespace reg{
   // find set of closest points using brute-force or KD-Tree
   Eigen::MatrixXd find_closest_points(const Eigen::MatrixXd& model_set, const Eigen::MatrixXd& new_scene_set);
   Eigen::MatrixXd find_closest_points_faster(KdTree& tree, const Eigen::MatrixXd& new_scene_set);   
+  
   // Transition to and from homogeneous coordinates 
   Eigen::MatrixXd make_not_homogeneous(const Eigen::MatrixXd& points);
   Eigen::MatrixXd make_homogeneous(const Eigen::MatrixXd& points);

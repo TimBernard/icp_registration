@@ -100,7 +100,7 @@ namespace reg{
     
     for(int i=0; i < max_iterations; ++i){
 
-      //  std::lock_guard<std::mutex> lg(sceneUpdateMutex);
+      //std::lock_guard<std::mutex> lg(sceneUpdateMutex);
       sceneUpdate = true;
       
       std::cout << "\n--------------------------------------" << std::endl;
