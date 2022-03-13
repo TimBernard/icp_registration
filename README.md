@@ -2,16 +2,31 @@
 
 An (in-progress) implementation of iterative closest point using c++
 
-## Usage
+## Build 
+After cloning the repository to your local machine: 
+```
+cd icp_registraion 
+mkdir build && cd build 
+cmake ../ -DCMAKE_BUILD_TYPE=Release
+make # or make -j <however_many_processes> 
+```
 
-* Currently, main.cpp in root directory loads two mis-aligned point clouds[[1]](#1) and runs icp to return an aligning transformation
+## Run 
+```
+cd build 
+./main 
+```
+
+## Usage
+* Currently, main.cpp is an example that loads two loads two mis-aligned point clouds[[1]](#1) and runs icp to return an aligning transformation
 * Opens PCL Visualizer simultaneously to visualize alginment of "scene" cloud to "model" cloud
-* Tested on Ubuntu 16.04 
+* Has been run on Ubuntu 16.04 and 20.04 
 
 ## Dependcies
 
 * PCL 
 * Eigen3 
+* pthread 
 
 ## References 
 <a id="1">[1]</a> 
